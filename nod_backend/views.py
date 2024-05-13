@@ -6,6 +6,8 @@ from django.views.decorators.cache import cache_page
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.response import Response
 from .serializers import *
+from .models import Plan
+
 
 logger = logging.getLogger('django')
 
@@ -19,3 +21,7 @@ class MealsViewSet(viewsets.ModelViewSet):
         return Response({
             "rows": ["test"]
         })
+
+class PlanViewSet(viewsets.ModelViewSet):
+    queryset = Plan.objects.all()
+    serializer_class = PlanSerializer
