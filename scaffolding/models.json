@@ -1,116 +1,168 @@
 {
-  "Users": [
+  "Customer": [
+    {
+      "Field Label": "User ID",
+      "Field Name": "",
+      "Field Type": "User (cms)",
+      "HowMany": "",
+      "Required": "",
+      "Relationship": "",
+      "Default": "",
+      "Example": ""
+    },
     {
       "Field Label": "Email",
       "Field Name": "",
       "Field Type": "email",
-      "Cardinality": "1",
+      "HowMany": "1",
       "Required": "1",
       "Relationship": "",
       "Default": "",
-      "Structure": ""
+      "Example": ""
     },
     {
       "Field Label": "Billing Name",
       "Field Name": "",
       "Field Type": "text",
-      "Cardinality": "1",
+      "HowMany": "1",
       "Required": "0",
       "Relationship": "",
       "Default": "",
-      "Structure": ""
+      "Example": ""
     },
     {
       "Field Label": "Billing Address",
       "Field Name": "",
       "Field Type": "address",
-      "Cardinality": "1",
+      "HowMany": "1",
       "Required": "0",
       "Relationship": "",
       "Default": "",
-      "Structure": ""
+      "Example": ""
     },
     {
       "Field Label": "Delivery Name",
       "Field Name": "",
       "Field Type": "text",
-      "Cardinality": "1",
+      "HowMany": "1",
       "Required": "0",
       "Relationship": "",
       "Default": "",
-      "Structure": ""
+      "Example": ""
     },
     {
       "Field Label": "Delivery Address",
       "Field Name": "",
       "Field Type": "address",
-      "Cardinality": "1",
+      "HowMany": "1",
       "Required": "0",
       "Relationship": "",
       "Default": "",
-      "Structure": ""
+      "Example": ""
     }
   ],
-  "Ingredients": [
+  "Supplier": [
+    {
+      "Field Label": "Name",
+      "Field Name": "",
+      "Field Type": "text",
+      "HowMany": "",
+      "Required": "1",
+      "Relationship": "",
+      "Default": "",
+      "Example": ""
+    },
+    {
+      "Field Label": "Photo",
+      "Field Name": "",
+      "Field Type": "image",
+      "HowMany": "",
+      "Required": "",
+      "Relationship": "",
+      "Default": "",
+      "Example": ""
+    },
+    {
+      "Field Label": "Address",
+      "Field Name": "",
+      "Field Type": "address",
+      "HowMany": "",
+      "Required": "",
+      "Relationship": "",
+      "Default": "",
+      "Example": ""
+    },
+    {
+      "Field Label": "Website",
+      "Field Name": "",
+      "Field Type": "URL",
+      "HowMany": "",
+      "Required": "",
+      "Relationship": "",
+      "Default": "",
+      "Example": ""
+    }
+  ],
+  "Ingredient": [
     {
       "Field Label": "Title",
       "Field Name": "",
       "Field Type": "text",
-      "Cardinality": "",
-      "Required": "",
+      "HowMany": "",
+      "Required": "1",
       "Relationship": "",
       "Default": "",
-      "Structure": ""
+      "Example": ""
     },
     {
       "Field Label": "Image",
       "Field Name": "",
       "Field Type": "image",
-      "Cardinality": "",
+      "HowMany": "",
       "Required": "",
       "Relationship": "",
       "Default": "",
-      "Structure": ""
+      "Example": ""
     },
     {
       "Field Label": "Supplier",
       "Field Name": "",
-      "Field Type": "reference",
-      "Cardinality": "",
+      "Field Type": "type reference",
+      "HowMany": "",
       "Required": "",
-      "Relationship": "Suppliers",
+      "Relationship": "Supplier",
       "Default": "",
-      "Structure": ""
+      "Example": ""
     },
     {
       "Field Label": "Seasonal",
       "Field Name": "",
       "Field Type": "boolean",
-      "Cardinality": "",
+      "HowMany": "",
       "Required": "",
       "Relationship": "",
       "Default": "",
-      "Structure": ""
+      "Example": ""
     },
     {
       "Field Label": "In season Price",
       "Field Name": "",
       "Field Type": "decimal",
-      "Cardinality": "",
+      "HowMany": "",
       "Required": "",
       "Relationship": "",
       "Default": "",
-      "Structure": ""
+      "Example": ""
     },
     {
       "Field Label": "Out of season price",
       "Field Name": "",
       "Field Type": "decimal",
-      "Cardinality": "",
+      "HowMany": "",
       "Required": "",
       "Relationship": "",
       "Default": "",
-      "Structure": ""
+      "Example": ""
     }
   ],
   "Meal": [
@@ -118,269 +170,227 @@
       "Field Label": "Title",
       "Field Name": "",
       "Field Type": "text",
-      "Cardinality": "",
-      "Required": "",
+      "HowMany": "1",
+      "Required": "1",
       "Relationship": "",
       "Default": "",
-      "Structure": ""
+      "Example": ""
     },
     {
       "Field Label": "Description",
       "Field Name": "",
       "Field Type": "text",
-      "Cardinality": "",
-      "Required": "",
+      "HowMany": "1",
+      "Required": "1",
       "Relationship": "",
       "Default": "",
-      "Structure": ""
+      "Example": ""
     },
     {
       "Field Label": "BLD",
       "Field Name": "",
-      "Field Type": "list",
-      "Cardinality": "",
-      "Required": "",
+      "Field Type": "enum",
+      "HowMany": "1",
+      "Required": "1",
       "Relationship": "",
       "Default": "",
-      "Structure": "Breakfast / Lunch / Dinner"
+      "Example": "['breakfast, 'lunch', 'dinner', 'desert', 'snack']"
     },
     {
       "Field Label": "Photo",
       "Field Name": "",
       "Field Type": "media",
-      "Cardinality": "",
-      "Required": "",
+      "HowMany": "3",
+      "Required": "1",
       "Relationship": "",
       "Default": "",
-      "Structure": ""
+      "Example": ""
     },
     {
       "Field Label": "Internal Cost",
       "Field Name": "",
       "Field Type": "decimal",
-      "Cardinality": "",
+      "HowMany": "",
       "Required": "",
       "Relationship": "",
       "Default": "",
-      "Structure": ""
+      "Example": ""
     },
     {
       "Field Label": "Public Price",
       "Field Name": "",
       "Field Type": "decimal",
-      "Cardinality": "",
+      "HowMany": "",
       "Required": "",
       "Relationship": "",
-      "Default": "",
-      "Structure": ""
+      "Default": "16",
+      "Example": ""
     },
     {
       "Field Label": "Ingredients",
       "Field Name": "",
-      "Field Type": "reference",
-      "Cardinality": "unlimited",
+      "Field Type": "type reference",
+      "HowMany": "unlimited",
       "Required": "",
-      "Relationship": "Ingredients",
+      "Relationship": "Ingredient",
       "Default": "",
-      "Structure": ""
+      "Example": ""
     },
     {
       "Field Label": "Suppliers",
       "Field Name": "",
-      "Field Type": "reference",
-      "Cardinality": "unlimited",
+      "Field Type": "type reference",
+      "HowMany": "unlimited",
       "Required": "",
-      "Relationship": "Suppliers",
+      "Relationship": "Supplier",
       "Default": "",
-      "Structure": ""
+      "Example": ""
     }
   ],
-  "Menu": [
+  "Order Items": [
     {
       "Field Label": "Date",
       "Field Name": "",
       "Field Type": "date",
-      "Cardinality": "",
-      "Required": "",
+      "HowMany": "1",
+      "Required": "1",
       "Relationship": "",
       "Default": "",
-      "Structure": ""
+      "Example": ""
     },
     {
-      "Field Label": "Breakfast",
+      "Field Label": "Delivery Date",
       "Field Name": "",
-      "Field Type": "reference",
-      "Cardinality": "",
+      "Field Type": "date",
+      "HowMany": "1",
+      "Required": "1",
+      "Relationship": "",
+      "Default": "",
+      "Example": ""
+    },
+    {
+      "Field Label": "Meal",
+      "Field Name": "",
+      "Field Type": "type reference",
+      "HowMany": "1",
       "Required": "",
       "Relationship": "Meal",
       "Default": "",
-      "Structure": ""
+      "Example": ""
     },
     {
-      "Field Label": "Lunch",
+      "Field Label": "Servings",
       "Field Name": "",
-      "Field Type": "reference",
-      "Cardinality": "",
-      "Required": "",
-      "Relationship": "Meal",
-      "Default": "",
-      "Structure": ""
-    },
-    {
-      "Field Label": "Dinner",
-      "Field Name": "",
-      "Field Type": "reference",
-      "Cardinality": "",
-      "Required": "",
-      "Relationship": "Meal",
-      "Default": "",
-      "Structure": ""
+      "Field Type": "integer",
+      "HowMany": "1",
+      "Required": "1",
+      "Relationship": "",
+      "Default": "1",
+      "Example": ""
     }
   ],
   "Plan": [
     {
       "Field Label": "Customer",
       "Field Name": "",
-      "Field Type": "reference",
-      "Cardinality": "",
-      "Required": "",
-      "Relationship": "Users",
+      "Field Type": "User (custom)",
+      "HowMany": "1",
+      "Required": "1",
+      "Relationship": "Customer",
       "Default": "",
-      "Structure": ""
+      "Example": ""
     },
     {
       "Field Label": "Created Date",
       "Field Name": "",
       "Field Type": "date",
-      "Cardinality": "",
-      "Required": "",
+      "HowMany": "1",
+      "Required": "1",
       "Relationship": "",
       "Default": "",
-      "Structure": ""
+      "Example": ""
     },
     {
       "Field Label": "Start Date",
       "Field Name": "",
       "Field Type": "date",
-      "Cardinality": "",
-      "Required": "",
+      "HowMany": "1",
+      "Required": "1",
       "Relationship": "",
       "Default": "",
-      "Structure": ""
+      "Example": ""
     },
     {
       "Field Label": "Customizations",
       "Field Name": "",
       "Field Type": "text",
-      "Cardinality": "",
-      "Required": "",
+      "HowMany": "1",
+      "Required": "1",
       "Relationship": "",
       "Default": "",
-      "Structure": ""
+      "Example": ""
     },
     {
       "Field Label": "Glass Containers",
       "Field Name": "",
       "Field Type": "boolean",
-      "Cardinality": "",
+      "HowMany": "1",
       "Required": "",
       "Relationship": "",
-      "Default": "",
-      "Structure": ""
+      "Default": "0",
+      "Example": ""
     },
     {
       "Field Label": "Order Items",
       "Field Name": "",
-      "Field Type": "json",
-      "Cardinality": "",
-      "Required": "",
-      "Relationship": "",
+      "Field Type": "type reference",
+      "HowMany": "unlimited",
+      "Required": "1",
+      "Relationship": "Order Items",
       "Default": "",
-      "Structure": "[{meal, servings}, ....]"
+      "Example": ""
     }
   ],
   "Order": [
     {
       "Field Label": "Plan",
       "Field Name": "",
-      "Field Type": "reference",
-      "Cardinality": "",
-      "Required": "",
+      "Field Type": "type reference",
+      "HowMany": "",
+      "Required": "1",
       "Relationship": "Plan",
       "Default": "",
-      "Structure": ""
+      "Example": ""
     },
     {
       "Field Label": "Final Price",
       "Field Name": "",
       "Field Type": "decimal",
-      "Cardinality": "",
-      "Required": "",
+      "HowMany": "",
+      "Required": "1",
       "Relationship": "",
       "Default": "",
-      "Structure": ""
+      "Example": ""
     },
     {
       "Field Label": "Recurring",
       "Field Name": "",
       "Field Type": "boolean",
-      "Cardinality": "",
+      "HowMany": "",
       "Required": "",
       "Relationship": "",
-      "Default": "",
-      "Structure": ""
+      "Default": "0",
+      "Example": ""
     },
     {
       "Field Label": "Delivery Instructions",
       "Field Name": "",
       "Field Type": "textarea",
-      "Cardinality": "",
+      "HowMany": "",
       "Required": "",
       "Relationship": "",
       "Default": "",
-      "Structure": ""
-    }
-  ],
-  "Suppliers": [
-    {
-      "Field Label": "Name",
-      "Field Name": "",
-      "Field Type": "text",
-      "Cardinality": "",
-      "Required": "",
-      "Relationship": "",
-      "Default": "",
-      "Structure": ""
-    },
-    {
-      "Field Label": "Photo",
-      "Field Name": "",
-      "Field Type": "image",
-      "Cardinality": "",
-      "Required": "",
-      "Relationship": "",
-      "Default": "",
-      "Structure": ""
-    },
-    {
-      "Field Label": "Address",
-      "Field Name": "",
-      "Field Type": "address",
-      "Cardinality": "",
-      "Required": "",
-      "Relationship": "",
-      "Default": "",
-      "Structure": ""
-    },
-    {
-      "Field Label": "Website",
-      "Field Name": "",
-      "Field Type": "URL",
-      "Cardinality": "",
-      "Required": "",
-      "Relationship": "",
-      "Default": "",
-      "Structure": ""
+      "Example": ""
     }
   ]
 }

@@ -2,6 +2,23 @@ import csv
 import json
 import re
 
+
+def inject_generated_code(output_file_path, code):
+    with open(output_file_path, 'r', encoding='utf-8') as file:
+        html = file.read()
+
+    start = html.find("###OBJECT-ACTIONS-MODELS-STARTS###") + len("###OBJECT-ACTIONS-MODELS-STARTS###")
+    end = html.find("###OBJECT-ACTIONS-MODELS-ENDS###")
+
+    start_html = html[:start]
+    end_html = html[end:]
+    html = start_html + code + end_html
+
+    with open(output_file_path, 'w', encoding='utf-8') as file:
+        file.write(html)
+
+    print('HTML file has been generated successfully.')
+
 def build_json_from_csv(csv_file):
     # Initialize an empty dictionary to store JSON object
     json_data = {}
@@ -39,24 +56,68 @@ def build_json_from_csv(csv_file):
     return json_data
 
 def build_all_models(json):
-    model_code = "from django.db import models\n"
-    if 'user' not in json and 'User' not in json and 'Users' not in json:
-        model_code += f"from django.contrib.auth.models import User\n"
+    model_code = ""
+    # model_code = "from django.db import models\n"
+    # if 'user' not in json and 'User' not in json and 'Users' not in json:
+        # model_code += f"from django.contrib.auth.models import User\n"
+
     for object_type in json:
-        model_name = object_type
-        model_code += f"\nclass {model_name}(models.Model):\n"
+        title_field = False
+        model_name = create_object_name(object_type)
+        model_code += f"\nclass {model_name}(SuperModel):\n"
 
         for field in json[object_type]:
             field_type = field['Field Type']
             field_name = field['Field Name']
             if field_name is None or field_name == '':
                 field_name = create_machine_name(field['Field Label'])
+
+            if field_name == 'title':
+                title_field = field_name
+            elif field_name == 'name':
+                title_field = field_name
+
             if field_type is None:
                 field_type = 'text'
             model_type = infer_field_type(field_type, field)
+            if field['Required'].strip() == '' or int(field['Required']) < 1:
+                model_type = addArgs(model_type, ['blank=True', 'null=True'])
+            if field['Default'].strip() != '':
+                model_type = addArgs(model_type, [f"default={field['Default']}"])
+
             model_code += f"    {field_name} = {model_type}\n"
 
+#        if title_field is not None:
+#            model_code += "\n   def __str__(self):"
+#            model_code += f"\n      return self.{title_field}\n"
+
+        model_code += f"admin.site.register({model_name})\n"
+
+
     return model_code
+
+
+def addArgs(target, new_args):
+    # Split the target string into function name and arguments
+    func_name, args_str = target.split('(')
+
+    # Remove trailing parenthesis from args string and split the arguments
+    args = args_str.rstrip(')').split(',')
+
+    # Add non-empty new arguments to the existing arguments list
+    args.extend(new_args)
+
+    # Filter out empty strings from new_args
+    args = [arg for arg in args if arg != '']
+
+    # Combine function name and modified arguments
+    if len(args) == 1:  # If there is only one argument, no need for a comma
+        modified_target = f"{func_name}({args[0]})"
+    else:
+        modified_target = f"{func_name}({', '.join(args)})"
+
+    return modified_target
+
 
 def infer_field_type(field_type, field):
     field_type = field_type.lower()
@@ -86,32 +147,40 @@ def infer_field_type(field_type, field):
         return "models.JSONField()"  # Store both as JSON array
     elif field_type == "json":
         return "models.JSONField()"  # Store both as JSON array
-    elif field_type == "reference":
+    elif field_type == "enum":
+        return f"models.CharField(max_length=20, choices=MealTimes.choices)"
+    elif field_type == "vocabulary reference" or field_type == field_type == "type reference":
         # return "models.ManyToManyField()"
         # return "models.OneToOneField()"
-        return f"models.ForeignKey({field['Relationship']}, on_delete=models.CASCADE)"
+        model_name = create_object_name(field['Relationship'])
+        return f"models.ForeignKey('{model_name}', on_delete=models.CASCADE)"
     elif field_type == "address":
         return "models.CharField(max_length=2555)"  # Adjust max_length as needed
     else:
         return "models.TextField()"
 
-def create_machine_name(label):
+def create_object_name(label):
+    return re.sub(r'[^a-zA-Z0-9\s]', '', label).replace(' ', '')
+
+def create_machine_name(label, lower=True):
     # Remove special characters and spaces, replace them with underscores
     machine_name = re.sub(r'[^a-zA-Z0-9\s]', '', label).strip().replace(' ', '_')
-    # Convert to lowercase
-    machine_name = machine_name.lower()
+    if lower is True:
+        machine_name = machine_name.lower()
     return machine_name
 
 # Example usage
 csv_file = "object-fields.csv"
 
 model_json = build_json_from_csv(csv_file)
-f = open("models.json", "r+")
+f = open("models.json", "w")
 f.write(json.dumps(model_json, indent=2))
 f.close()
 
 model_code = build_all_models(model_json)
-f = open("models.py", "r+")
+inject_generated_code('../nod_backend/models.py', model_code)
+
+f = open("models.py", "w")
 f.write(model_code)
 f.close()
 
