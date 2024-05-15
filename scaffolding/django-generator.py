@@ -46,6 +46,7 @@ class DjangoGenerator:
         self.build_models()
         self.build_serializers()
         self.build_viewsets()
+        self.build_urls()
 
     def build_models(self):
 
@@ -93,6 +94,16 @@ class DjangoGenerator:
         outpath = os.path.join(self.output_dir, 'serializers.py')
         inject_generated_code(outpath, code, 'SERIALIZERS')
 
+    def build_urls(self):
+        code = "router = DefaultRouter()\n"
+        for class_name in self.json:
+            path_name = create_machine_name(class_name)
+            model_name = create_object_name(class_name)
+            code += f"router.register(r'api/{path_name}', {model_name}ViewSet, basename='{path_name}')\n"
+
+        outpath = os.path.join(self.output_dir, 'urls.py')
+        inject_generated_code(outpath, code, 'URLS')
+
     def build_viewsets(self):
         code = ""
         for class_name in self.json:
@@ -108,4 +119,4 @@ class DjangoGenerator:
 
 # if __name__ == "__main__":
 
-DjangoGenerator("./object-fields.csv", '.')
+DjangoGenerator("./object-fields.csv", '../nod_backend')

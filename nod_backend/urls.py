@@ -5,15 +5,17 @@ from django.conf import settings
 from django.urls import include, path
 from django.contrib import admin
 
+###OBJECT-ACTIONS-URLS-STARTS###
 router = DefaultRouter()
-router.register(r'api/menu', MealsViewSet, basename='menu')
-router.register(r'api/plans', PlanViewSet)
-router.register(r'api/ingredients', IngredientViewSet)
-# router.register(r'supplier', PlanViewSet)
-# router.register(r'ingredient', PlanViewSet)
-# router.register(r'meal', PlanViewSet)
-# router.register(r'menu', PlanViewSet)
+router.register(r'api/customer', CustomerViewSet, basename='customer')
+router.register(r'api/supplier', SupplierViewSet, basename='supplier')
+router.register(r'api/ingredient', IngredientViewSet, basename='ingredient')
+router.register(r'api/meal', MealViewSet, basename='meal')
+router.register(r'api/order_items', OrderItemsViewSet, basename='order_items')
+router.register(r'api/plan', PlanViewSet, basename='plan')
+router.register(r'api/order', OrderViewSet, basename='order')
 
+###OBJECT-ACTIONS-URLS-ENDS###
 
 urlpatterns = [
     path("admin/", admin.site.urls),
