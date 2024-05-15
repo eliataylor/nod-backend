@@ -7,6 +7,7 @@ from django.contrib import admin
 
 ###OBJECT-ACTIONS-URLS-STARTS###
 router = DefaultRouter()
+
 router.register(r'api/customer', CustomerViewSet, basename='customer')
 router.register(r'api/supplier', SupplierViewSet, basename='supplier')
 router.register(r'api/ingredient', IngredientViewSet, basename='ingredient')

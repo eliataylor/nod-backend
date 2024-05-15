@@ -16,7 +16,7 @@ class DjangoGenerator:
         self.viewsetTpl = """class __CLASSNAME__ViewSet(viewsets.ModelViewSet):
     queryset = __CLASSNAME__.objects.all()
     serializer_class = __CLASSNAME__Serializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.AllowAny]
 
     # Add pagination
     pagination_class = CustomPagination
@@ -50,7 +50,7 @@ class DjangoGenerator:
 
     def build_models(self):
 
-        code = ""
+        code = "\n"
         for class_name in self.json:
             title_field = False
             model_name = create_object_name(class_name)
@@ -84,7 +84,7 @@ class DjangoGenerator:
         inject_generated_code(model_file_path, code, 'MODELS')
 
     def build_serializers(self):
-        code = ""
+        code = "\n"
         for class_name in self.json:
             model_name = create_object_name(class_name)
             code += "\n"
@@ -95,7 +95,7 @@ class DjangoGenerator:
         inject_generated_code(outpath, code, 'SERIALIZERS')
 
     def build_urls(self):
-        code = "router = DefaultRouter()\n"
+        code = "\nrouter = DefaultRouter()\n"
         for class_name in self.json:
             path_name = create_machine_name(class_name)
             model_name = create_object_name(class_name)
@@ -105,7 +105,7 @@ class DjangoGenerator:
         inject_generated_code(outpath, code, 'URLS')
 
     def build_viewsets(self):
-        code = ""
+        code = "\n"
         for class_name in self.json:
             model_name = create_object_name(class_name)
             code += "\n"
@@ -116,7 +116,23 @@ class DjangoGenerator:
         inject_generated_code(outpath, code, 'VIEWSETS')
 
 
+if __name__ == "__main__":
+    if len(sys.argv) != 3:
+        print("Missing Parameter. Try: python django/project-builder.py <field_types_csv> <output_directory>")
+        sys.exit(1)
 
-# if __name__ == "__main__":
+    input = sys.argv[1]
 
-DjangoGenerator("./object-fields.csv", '../nod_backend')
+    if not os.path.exists(input):
+        print(f"Error: Field Types CSV '{input}' does not exist.")
+        sys.exit(1)
+
+    dir = sys.argv[2]
+    if not os.path.exists(dir):
+        print(f"Error: Directory '{input}' does not exist.")
+        sys.exit(1)
+
+    DjangoGenerator(input, dir)
+
+
+# DjangoGenerator("./scaffolding/object-fields.csv", './../nod_backend')

@@ -1,6 +1,7 @@
 import csv
 import json
 import re
+import os
 
 def build_json_from_csv(csv_file):
     # Initialize an empty dictionary to store JSON object
@@ -38,24 +39,31 @@ def build_json_from_csv(csv_file):
 
     return json_data
 def inject_generated_code(output_file_path, code, prefix):
-    with open(output_file_path, 'a+', encoding='utf-8') as file:
-        html = file.read()
+    start_delim = f"###OBJECT-ACTIONS-{prefix}-STARTS###"
+    end_delim = f"###OBJECT-ACTIONS-{prefix}-ENDS###"
 
-    start = html.find(f"###OBJECT-ACTIONS-{prefix}-STARTS###")
-    if start < 0:
-        start = 0
-        code = f"###OBJECT-ACTIONS-{prefix}-STARTS###\n" + code
+    if os.path.exists(output_file_path) is False:
+        html = start_delim + "\n" + code + "\n" + end_delim
     else:
-        start += len(f"###OBJECT-ACTIONS-{prefix}-STARTS###")
 
-    end = html.find(f"###OBJECT-ACTIONS-{prefix}-ENDS###")
-    if end < 0:
-        end = len(code) - 1
-        code = code + f"\n###OBJECT-ACTIONS-{prefix}-ENDS###"
+        with open(output_file_path, 'r', encoding='utf-8') as file:
+            html = file.read()
 
-    start_html = html[:start]
-    end_html = html[end:]
-    html = start_html + code + end_html
+        start = html.find(start_delim)
+        if start < 0:
+            start = len(html) - 1 #append to end of file
+            code = f"\n\n{start_delim}n" + code
+        else:
+            start += len(start_delim)
+
+        end = html.find(end_delim)
+        if end < 0:
+            end = len(code)
+            code = code + end_delim
+
+        start_html = html[:start]
+        end_html = html[end:]
+        html = start_html + code + end_html
 
     with open(output_file_path, 'w', encoding='utf-8') as file:
         file.write(html)
