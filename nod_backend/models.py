@@ -5,7 +5,6 @@ from django.utils import timezone
 from django.contrib.auth import get_user_model
 # from scaffolding.models import Order
 
-
 class MealTimes(models.TextChoices):
     breakfast = 'Breakfast', 'breakfast'
     lunch = 'Lunch', 'lunch'
@@ -19,7 +18,6 @@ class SuperModel(models.Model):
     author = models.ForeignKey(get_user_model(), on_delete=models.SET_NULL, null=True, blank=True)
     class Meta:
         abstract = True
-
     def __str__(self):
         if hasattr(self, "title"):
             return self.title
@@ -39,8 +37,8 @@ class SuperModel(models.Model):
                 self.author = self.get_current_user(request)
         super().save(*args, **kwargs)
 
-
 ###OBJECT-ACTIONS-MODELS-STARTS###
+
 class Customer(SuperModel):
     user_id = models.TextField(blank=True, null=True)
     email = models.TextField()
@@ -99,4 +97,5 @@ class Order(SuperModel):
     recurring = models.BooleanField(blank=True,  null=True, default=0)
     delivery_instructions = models.TextField(blank=True, null=True)
 admin.site.register(Order)
+
 ###OBJECT-ACTIONS-MODELS-ENDS###

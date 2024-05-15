@@ -6,9 +6,9 @@ from django.urls import include, path
 from django.contrib import admin
 
 router = DefaultRouter()
-router.register(r'menu', MealsViewSet, basename='meals')
-router.register(r'plans', PlanViewSet)
-# router.register(r'orders', PlanViewSet)
+router.register(r'api/menu', MealsViewSet, basename='menu')
+router.register(r'api/plans', PlanViewSet)
+router.register(r'api/ingredients', IngredientViewSet)
 # router.register(r'supplier', PlanViewSet)
 # router.register(r'ingredient', PlanViewSet)
 # router.register(r'meal', PlanViewSet)

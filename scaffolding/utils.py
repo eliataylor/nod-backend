@@ -2,23 +2,6 @@ import csv
 import json
 import re
 
-
-def inject_generated_code(output_file_path, code, prefix='MODELS'):
-    with open(output_file_path, 'r', encoding='utf-8') as file:
-        html = file.read()
-
-    start = html.find(f"###OBJECT-ACTIONS-{prefix}-STARTS###") + len(f"###OBJECT-ACTIONS-{prefix}-STARTS###")
-    end = html.find(f"###OBJECT-ACTIONS-{prefix}-ENDS###")
-
-    start_html = html[:start]
-    end_html = html[end:]
-    html = start_html + code + end_html
-
-    with open(output_file_path, 'w', encoding='utf-8') as file:
-        file.write(html)
-
-    print(' models built. ')
-
 def build_json_from_csv(csv_file):
     # Initialize an empty dictionary to store JSON object
     json_data = {}
@@ -54,48 +37,30 @@ def build_json_from_csv(csv_file):
                 json_data[cur_type] = [row]
 
     return json_data
+def inject_generated_code(output_file_path, code, prefix):
+    with open(output_file_path, 'a+', encoding='utf-8') as file:
+        html = file.read()
 
-def build_all_models(json):
-    model_code = ""
-    # model_code = "from django.db import models\n"
-    # if 'user' not in json and 'User' not in json and 'Users' not in json:
-        # model_code += f"from django.contrib.auth.models import User\n"
+    start = html.find(f"###OBJECT-ACTIONS-{prefix}-STARTS###")
+    if start < 0:
+        start = 0
+        code = f"###OBJECT-ACTIONS-{prefix}-STARTS###\n" + code
+    else:
+        start += len(f"###OBJECT-ACTIONS-{prefix}-STARTS###")
 
-    for object_type in json:
-        title_field = False
-        model_name = create_object_name(object_type)
-        model_code += f"\nclass {model_name}(SuperModel):\n"
+    end = html.find(f"###OBJECT-ACTIONS-{prefix}-ENDS###")
+    if end < 0:
+        end = len(code) - 1
+        code = code + f"\n###OBJECT-ACTIONS-{prefix}-ENDS###"
 
-        for field in json[object_type]:
-            field_type = field['Field Type']
-            field_name = field['Field Name']
-            if field_name is None or field_name == '':
-                field_name = create_machine_name(field['Field Label'])
+    start_html = html[:start]
+    end_html = html[end:]
+    html = start_html + code + end_html
 
-            if field_name == 'title':
-                title_field = field_name
-            elif field_name == 'name':
-                title_field = field_name
+    with open(output_file_path, 'w', encoding='utf-8') as file:
+        file.write(html)
 
-            if field_type is None:
-                field_type = 'text'
-            model_type = infer_field_type(field_type, field)
-            if field['Required'].strip() == '' or int(field['Required']) < 1:
-                model_type = addArgs(model_type, ['blank=True', 'null=True'])
-            if field['Default'].strip() != '':
-                model_type = addArgs(model_type, [f"default={field['Default']}"])
-
-            model_code += f"    {field_name} = {model_type}\n"
-
-#        if title_field is not None:
-#            model_code += "\n   def __str__(self):"
-#            model_code += f"\n      return self.{title_field}\n"
-
-        model_code += f"admin.site.register({model_name})\n"
-
-
-    return model_code
-
+    print(f"{prefix} built. ")
 
 def addArgs(target, new_args):
     # Split the target string into function name and arguments
@@ -168,20 +133,3 @@ def create_machine_name(label, lower=True):
     if lower is True:
         machine_name = machine_name.lower()
     return machine_name
-
-# Example usage
-csv_file = "object-fields.csv"
-
-model_json = build_json_from_csv(csv_file)
-f = open("models.json", "w")
-f.write(json.dumps(model_json, indent=2))
-f.close()
-
-model_code = build_all_models(model_json)
-inject_generated_code('../nod_backend/models.py', model_code, "MODELS")
-
-f = open("models.py", "w")
-f.write(model_code)
-f.close()
-
-# You can save the generated code to a file named 'models.py' in your app directory

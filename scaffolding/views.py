@@ -1,21 +1,3 @@
-import logging
-from rest_framework import viewsets, permissions
-from rest_framework.decorators import action
-from rest_framework.response import Response
-from django.utils.decorators import method_decorator
-from django.views.decorators.cache import cache_page
-from rest_framework.pagination import PageNumberPagination
-from .serializers import *
-from .models import Customer, Plan, Order, Supplier, Ingredient, Meal, OrderItems
-
-logger = logging.getLogger('django')
-
-class CustomPagination(PageNumberPagination):
-    page_size = 10  # Default number of results per page
-    page_size_query_param = 'page_size'  #
-    max_page_size = 100  # Maximum number of results per page
-
-
 ###OBJECT-ACTIONS-VIEWSETS-STARTS###
 
 class CustomerViewSet(viewsets.ModelViewSet):
@@ -42,7 +24,9 @@ class CustomerViewSet(viewsets.ModelViewSet):
             return super().create(request, *args, **kwargs)
         except Exception as e:
             return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
-
+        
+        
+        
 
 class SupplierViewSet(viewsets.ModelViewSet):
     queryset = Supplier.objects.all()
@@ -68,7 +52,9 @@ class SupplierViewSet(viewsets.ModelViewSet):
             return super().create(request, *args, **kwargs)
         except Exception as e:
             return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
-
+        
+        
+        
 
 class IngredientViewSet(viewsets.ModelViewSet):
     queryset = Ingredient.objects.all()
@@ -94,7 +80,9 @@ class IngredientViewSet(viewsets.ModelViewSet):
             return super().create(request, *args, **kwargs)
         except Exception as e:
             return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
-
+        
+        
+        
 
 class MealViewSet(viewsets.ModelViewSet):
     queryset = Meal.objects.all()
@@ -120,7 +108,9 @@ class MealViewSet(viewsets.ModelViewSet):
             return super().create(request, *args, **kwargs)
         except Exception as e:
             return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
-
+        
+        
+        
 
 class OrderItemsViewSet(viewsets.ModelViewSet):
     queryset = OrderItems.objects.all()
@@ -146,7 +136,9 @@ class OrderItemsViewSet(viewsets.ModelViewSet):
             return super().create(request, *args, **kwargs)
         except Exception as e:
             return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
-
+        
+        
+        
 
 class PlanViewSet(viewsets.ModelViewSet):
     queryset = Plan.objects.all()
@@ -172,7 +164,9 @@ class PlanViewSet(viewsets.ModelViewSet):
             return super().create(request, *args, **kwargs)
         except Exception as e:
             return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
-
+        
+        
+        
 
 class OrderViewSet(viewsets.ModelViewSet):
     queryset = Order.objects.all()
@@ -198,5 +192,8 @@ class OrderViewSet(viewsets.ModelViewSet):
             return super().create(request, *args, **kwargs)
         except Exception as e:
             return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
+        
+        
+        
 
 ###OBJECT-ACTIONS-VIEWSETS-ENDS###
