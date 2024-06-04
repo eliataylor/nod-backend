@@ -3,20 +3,24 @@ from .models import Customer, Plan, Order, Supplier, Ingredient, Meal, OrderItem
 
 
 ###OBJECT-ACTIONS-SERIALIZERS-STARTS###
+
 class CustomerSerializer(serializers.ModelSerializer):
     class Meta:
         model = Customer
         fields = '__all__'    
+        
 
 class SupplierSerializer(serializers.ModelSerializer):
     class Meta:
         model = Supplier
         fields = '__all__'    
+        
 
 class IngredientSerializer(serializers.ModelSerializer):
     class Meta:
         model = Ingredient
         fields = '__all__'    
+        
 
 class MealSerializer(serializers.ModelSerializer):
     class Meta:

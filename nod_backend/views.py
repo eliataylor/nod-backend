@@ -17,10 +17,11 @@ class CustomPagination(PageNumberPagination):
 
 
 ###OBJECT-ACTIONS-VIEWSETS-STARTS###
+
 class CustomerViewSet(viewsets.ModelViewSet):
     queryset = Customer.objects.all()
     serializer_class = CustomerSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.AllowAny]
 
     # Add pagination
     pagination_class = CustomPagination
@@ -41,6 +42,8 @@ class CustomerViewSet(viewsets.ModelViewSet):
             return super().create(request, *args, **kwargs)
         except Exception as e:
             return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
+        
+        
         
 
 class SupplierViewSet(viewsets.ModelViewSet):
@@ -74,7 +77,7 @@ class SupplierViewSet(viewsets.ModelViewSet):
 class IngredientViewSet(viewsets.ModelViewSet):
     queryset = Ingredient.objects.all()
     serializer_class = IngredientSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.AllowAny]
 
     # Add pagination
     pagination_class = CustomPagination
@@ -102,7 +105,7 @@ class IngredientViewSet(viewsets.ModelViewSet):
 class MealViewSet(viewsets.ModelViewSet):
     queryset = Meal.objects.all()
     serializer_class = MealSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.AllowAny]
 
     # Add pagination
     pagination_class = CustomPagination
@@ -130,7 +133,7 @@ class MealViewSet(viewsets.ModelViewSet):
 class OrderItemsViewSet(viewsets.ModelViewSet):
     queryset = OrderItems.objects.all()
     serializer_class = OrderItemsSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.AllowAny]
 
     # Add pagination
     pagination_class = CustomPagination
@@ -158,7 +161,7 @@ class OrderItemsViewSet(viewsets.ModelViewSet):
 class PlanViewSet(viewsets.ModelViewSet):
     queryset = Plan.objects.all()
     serializer_class = PlanSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.AllowAny]
 
     # Add pagination
     pagination_class = CustomPagination
@@ -186,7 +189,7 @@ class PlanViewSet(viewsets.ModelViewSet):
 class OrderViewSet(viewsets.ModelViewSet):
     queryset = Order.objects.all()
     serializer_class = OrderSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.AllowAny]
 
     # Add pagination
     pagination_class = CustomPagination

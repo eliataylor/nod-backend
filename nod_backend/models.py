@@ -38,6 +38,7 @@ class SuperModel(models.Model):
         super().save(*args, **kwargs)
 
 ###OBJECT-ACTIONS-MODELS-STARTS###
+
 class Customer(SuperModel):
     user_id = models.TextField(blank=True, null=True)
     email = models.TextField()
@@ -46,6 +47,7 @@ class Customer(SuperModel):
     delivery_name = models.CharField(max_length=255, blank=True, null=True)
     delivery_address = models.CharField(max_length=2555, blank=True, null=True)
 admin.site.register(Customer)
+
 class Supplier(SuperModel):
     name = models.CharField(max_length=255)
     photo = models.ImageField(blank=True, null=True)
