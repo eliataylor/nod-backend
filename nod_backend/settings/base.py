@@ -155,12 +155,16 @@ STORAGES = {
     },
 }
 
+ALLOWED_HOSTS = [
+    "https://nourishmentondemand.com",
+    "https://www.nourishmentondemand.com",
+    "https://lit-tor-86091-5dd2d3fd4e90.herokuapp.com"
+]
+
 CORS_ALLOWED_ORIGINS = [
     "https://nourishmentondemand.com",
     "https://www.nourishmentondemand.com",
 ]
-
-EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
 
 
 #### needs to be tracked in Object actions:

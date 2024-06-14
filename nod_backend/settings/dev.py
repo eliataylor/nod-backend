@@ -13,6 +13,12 @@ CORS_ALLOWED_ORIGINS = [
     "http://127.0.0.1:3000"
 ]
 
+INSTALLED_APPS += [
+    'django_extensions',  # Example of a dev-only app
+]
+
+EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
+
 # ALLOWED_HOSTS = ["*"]
 # CORS_ALLOW_ALL_ORIGINS = True
 
