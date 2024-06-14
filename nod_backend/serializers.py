@@ -1,8 +1,27 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 from rest_framework import serializers
-from .models import Customer, Plan, Order, Supplier, Ingredient, Meal, OrderItems
+from .models import Customer, Plan, Order, Supplier, Ingredient, Meal, OrderItem
 
 
 ###OBJECT-ACTIONS-SERIALIZERS-STARTS###
+
 
 class CustomerSerializer(serializers.ModelSerializer):
     class Meta:
@@ -28,15 +47,15 @@ class MealSerializer(serializers.ModelSerializer):
         fields = '__all__'    
         
 
-class OrderItemsSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = OrderItems
-        fields = '__all__'    
-        
-
 class PlanSerializer(serializers.ModelSerializer):
     class Meta:
         model = Plan
+        fields = '__all__'    
+        
+
+class OrderItemSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = OrderItem
         fields = '__all__'    
         
 
@@ -45,4 +64,22 @@ class OrderSerializer(serializers.ModelSerializer):
         model = Order
         fields = '__all__'    
         
+
 ###OBJECT-ACTIONS-SERIALIZERS-ENDS###
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

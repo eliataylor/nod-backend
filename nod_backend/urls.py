@@ -1,3 +1,21 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 from .views import *
 from rest_framework.routers import DefaultRouter
 
@@ -5,20 +23,34 @@ from django.conf import settings
 from django.urls import include, path
 from django.contrib import admin
 
+
+from rest_framework.schemas import get_schema_view
+from django.urls import path
+
 ###OBJECT-ACTIONS-URLS-STARTS###
+
 router = DefaultRouter()
 router.register(r'api/customer', CustomerViewSet, basename='customer')
 router.register(r'api/supplier', SupplierViewSet, basename='supplier')
 router.register(r'api/ingredient', IngredientViewSet, basename='ingredient')
 router.register(r'api/meal', MealViewSet, basename='meal')
-router.register(r'api/order_items', OrderItemsViewSet, basename='order_items')
 router.register(r'api/plan', PlanViewSet, basename='plan')
+router.register(r'api/order_item', OrderItemViewSet, basename='order_item')
 router.register(r'api/order', OrderViewSet, basename='order')
+
 ###OBJECT-ACTIONS-URLS-ENDS###
+
+"""
+path('schema/', get_schema_view(
+    title="Your Project",
+    description="API for all things …",
+    version="1.0.0"
+), name='openapi-schema')
+"""
 
 urlpatterns = [
     path("admin/", admin.site.urls),
-    path('', include(router.urls)),
+    path('api', include(router.urls)),
 ]
 
 if settings.DEBUG:
@@ -30,3 +62,21 @@ if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 urlpatterns.extend(router.urls)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

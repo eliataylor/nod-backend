@@ -27,6 +27,8 @@ INSTALLED_APPS = [
     'nod_backend',
     'rest_framework',
     'corsheaders',
+    'address',
+    'djmoney',
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
@@ -157,3 +159,8 @@ CORS_ALLOWED_ORIGINS = [
     "https://nourishmentondemand.com",
     "https://www.nourishmentondemand.com",
 ]
+
+
+#### needs to be tracked in Object actions:
+DEFAULT_AUTO_FIELD='django.db.models.AutoField'
+GOOGLE_API_KEY = 'CHANGEME'
