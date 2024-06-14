@@ -160,6 +160,8 @@ CORS_ALLOWED_ORIGINS = [
     "https://www.nourishmentondemand.com",
 ]
 
+EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
+
 
 #### needs to be tracked in Object actions:
 DEFAULT_AUTO_FIELD='django.db.models.AutoField'
