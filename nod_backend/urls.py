@@ -1,56 +1,31 @@
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-from .views import *
-from rest_framework.routers import DefaultRouter
-
+###OBJECT-ACTIONS-URLS-STARTS###
 from django.conf import settings
+from . import views
+from rest_framework.routers import DefaultRouter
 from django.urls import include, path
 from django.contrib import admin
-
-
 from rest_framework.schemas import get_schema_view
-from django.urls import path
-
-###OBJECT-ACTIONS-URLS-STARTS###
-
 router = DefaultRouter()
-router.register(r'api/customer', CustomerViewSet, basename='customer')
-router.register(r'api/supplier', SupplierViewSet, basename='supplier')
-router.register(r'api/ingredient', IngredientViewSet, basename='ingredient')
-router.register(r'api/meal', MealViewSet, basename='meal')
-router.register(r'api/plan', PlanViewSet, basename='plan')
-router.register(r'api/order_item', OrderItemViewSet, basename='order_item')
-router.register(r'api/order', OrderViewSet, basename='order')
+router.register(r'api/customer', views.CustomerViewSet, basename='customer')
+router.register(r'api/supplier', views.SupplierViewSet, basename='supplier')
+router.register(r'api/ingredient', views.IngredientViewSet, basename='ingredient')
+router.register(r'api/meal', views.MealViewSet, basename='meal')
+router.register(r'api/plan', views.PlanViewSet, basename='plan')
+router.register(r'api/order_item', views.OrderItemViewSet, basename='order_item')
+router.register(r'api/order', views.OrderViewSet, basename='order')
 
-###OBJECT-ACTIONS-URLS-ENDS###
 
-"""
-path('schema/', get_schema_view(
-    title="Your Project",
-    description="API for all things …",
-    version="1.0.0"
-), name='openapi-schema')
-"""
 
 urlpatterns = [
     path("admin/", admin.site.urls),
     path('api', include(router.urls)),
+    #path('', include(router.urls)),
+    path('schema/', get_schema_view(
+        title="Your Project",
+        description="API for all things …",
+        version="1.0.0"
+    ), name='openapi-schema')
 ]
 
 if settings.DEBUG:
@@ -64,19 +39,4 @@ if settings.DEBUG:
 urlpatterns.extend(router.urls)
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+###OBJECT-ACTIONS-URLS-ENDS###

@@ -1,41 +1,12 @@
-
-
-
-
-###OBJECT-ACTIONS-MODEL_IMPORTS-STARTS###
+import re
+from django.core.exceptions import ValidationError
+from address.models import AddressField
+from djmoney.models.fields import MoneyField
 from django.db import models
 from django.contrib.auth.models import User
 from django.contrib import admin
 from django.utils import timezone
 from django.contrib.auth import get_user_model
-import re
-from django.core.exceptions import ValidationError
-from address.models import AddressField
-from djmoney.models.fields import MoneyField
-###OBJECT-ACTIONS-MODEL_IMPORTS-ENDS###
-
-###OBJECT-ACTIONS-MODELS-STARTS###
-
-
-class StatusChoices(models.TextChoices):
-	paid = ("Paid", "paid")
-	cancelled = ("Cancelled", "cancelled")
-	unpaid = ("Unpaid", "unpaid")
-
-
-class BldChoices(models.TextChoices):
-	breakfast = ("Breakfast", "breakfast")
-	lunch = ("Lunch", "lunch")
-	dinner = ("Dinner", "dinner")
-	desert = ("Desert", "desert")
-	snack = ("Snack", "snack")
-
-def validate_phone_number(value):
-    phone_regex = re.compile(r'^\+?1?\d{9,15}$')
-    if not phone_regex.match(value):
-        raise ValidationError("Phone number must be entered in the format: '+999999999'. Up to 15 digits allowed.")
-
-
 class SuperModel(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     modified = models.DateTimeField(auto_now=True)
@@ -60,8 +31,24 @@ class SuperModel(models.Model):
             if request:
                 self.author = self.get_current_user(request)
         super().save(*args, **kwargs)
+def validate_phone_number(value):
+    phone_regex = re.compile(r'^\+?1?\d{9,15}$')
+    if not phone_regex.match(value):
+        raise ValidationError("Phone number must be entered in the format: '+999999999'. Up to 15 digits allowed.")
 
-        
+
+class BldChoices(models.TextChoices):
+	breakfast = ("Breakfast", "breakfast")
+	lunch = ("Lunch", "lunch")
+	dinner = ("Dinner", "dinner")
+	desert = ("Desert", "desert")
+	snack = ("Snack", "snack")
+
+
+class StatusChoices(models.TextChoices):
+	paid = ("Paid", "paid")
+	cancelled = ("Cancelled", "cancelled")
+	unpaid = ("Unpaid", "unpaid")
 
 class Customer(SuperModel):
     user_id = models.TextField(blank=True, null=True)
@@ -95,7 +82,7 @@ class Meal(SuperModel):
     title = models.CharField(max_length=255)
     description = models.CharField(max_length=255)
     bld = models.CharField(max_length=20, choices=BldChoices.choices)
-    photo = models.FileField(upload_to='media/',  blank=True, null=True)
+    photo = models.FileField(upload_to='media/')
     internal_cost = models.DecimalField(max_digits=10,  decimal_places=2, blank=True, null=True)
     public_price = models.DecimalField(max_digits=10,   decimal_places=2,  blank=True,  null=True, default=16)
     ingredients = models.ForeignKey('Ingredient',  on_delete=models.CASCADE, blank=True, null=True)
@@ -131,33 +118,3 @@ class Order(SuperModel):
     order_items = models.ForeignKey('OrderItem', on_delete=models.CASCADE)
     status = models.CharField(max_length=20,  default="unpaid", choices=StatusChoices.choices)
 admin.site.register(Order)
-
-###OBJECT-ACTIONS-MODELS-ENDS###
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
