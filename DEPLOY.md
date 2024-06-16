@@ -3,3 +3,6 @@
 - heroku login
 - heroku create
 - heroku config:set DJANGO_ENV=production
+
+## [Cloud Run]
+- https://cloud.google.com/python/django/run#macos-64-bit

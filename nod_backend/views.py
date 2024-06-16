@@ -1,49 +1,33 @@
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-import logging
-from rest_framework import viewsets, permissions
-from rest_framework.decorators import action
+###OBJECT-ACTIONS-VIEWSET-IMPORTS-STARTS###
+from rest_framework import viewsets, permissions, status, pagination
 from rest_framework.response import Response
 from django.utils.decorators import method_decorator
 from django.views.decorators.cache import cache_page
-from rest_framework.pagination import PageNumberPagination
-from .serializers import *
-from .models import Customer, Plan, Order, Supplier, Ingredient, Meal, OrderItem
+from rest_framework.decorators import action
+from .models import Customer
+from .serializers import CustomerSerializer
+from .models import Supplier
+from .serializers import SupplierSerializer
+from .models import Ingredient
+from .serializers import IngredientSerializer
+from .models import Meal
+from .serializers import MealSerializer
+from .models import Plan
+from .serializers import PlanSerializer
+from .models import OrderItem
+from .serializers import OrderItemSerializer
+from .models import Order
+from .serializers import OrderSerializer
+###OBJECT-ACTIONS-VIEWSET-IMPORTS-ENDS###
 
-logger = logging.getLogger('django')
-
-class CustomPagination(PageNumberPagination):
-    page_size = 10  # Default number of results per page
-    page_size_query_param = 'page_size'  #
-    max_page_size = 100  # Maximum number of results per page
 
 
 ###OBJECT-ACTIONS-VIEWSETS-STARTS###
-
-
 class CustomerViewSet(viewsets.ModelViewSet):
     queryset = Customer.objects.all()
     serializer_class = CustomerSerializer
     permission_classes = [permissions.IsAuthenticated]
-
-    # Add pagination
-    pagination_class = CustomPagination
 
     def get_queryset(self):
         return Customer.objects.all()
@@ -62,15 +46,12 @@ class CustomerViewSet(viewsets.ModelViewSet):
         except Exception as e:
             return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
-        
+
 
 class SupplierViewSet(viewsets.ModelViewSet):
     queryset = Supplier.objects.all()
     serializer_class = SupplierSerializer
     permission_classes = [permissions.IsAuthenticated]
-
-    # Add pagination
-    pagination_class = CustomPagination
 
     def get_queryset(self):
         return Supplier.objects.all()
@@ -89,15 +70,12 @@ class SupplierViewSet(viewsets.ModelViewSet):
         except Exception as e:
             return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
-        
+
 
 class IngredientViewSet(viewsets.ModelViewSet):
     queryset = Ingredient.objects.all()
     serializer_class = IngredientSerializer
     permission_classes = [permissions.IsAuthenticated]
-
-    # Add pagination
-    pagination_class = CustomPagination
 
     def get_queryset(self):
         return Ingredient.objects.all()
@@ -116,15 +94,12 @@ class IngredientViewSet(viewsets.ModelViewSet):
         except Exception as e:
             return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
-        
+
 
 class MealViewSet(viewsets.ModelViewSet):
     queryset = Meal.objects.all()
     serializer_class = MealSerializer
     permission_classes = [permissions.IsAuthenticated]
-
-    # Add pagination
-    pagination_class = CustomPagination
 
     def get_queryset(self):
         return Meal.objects.all()
@@ -143,15 +118,12 @@ class MealViewSet(viewsets.ModelViewSet):
         except Exception as e:
             return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
-        
+
 
 class PlanViewSet(viewsets.ModelViewSet):
     queryset = Plan.objects.all()
     serializer_class = PlanSerializer
     permission_classes = [permissions.IsAuthenticated]
-
-    # Add pagination
-    pagination_class = CustomPagination
 
     def get_queryset(self):
         return Plan.objects.all()
@@ -170,15 +142,12 @@ class PlanViewSet(viewsets.ModelViewSet):
         except Exception as e:
             return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
-        
+
 
 class OrderItemViewSet(viewsets.ModelViewSet):
     queryset = OrderItem.objects.all()
     serializer_class = OrderItemSerializer
     permission_classes = [permissions.IsAuthenticated]
-
-    # Add pagination
-    pagination_class = CustomPagination
 
     def get_queryset(self):
         return OrderItem.objects.all()
@@ -197,15 +166,12 @@ class OrderItemViewSet(viewsets.ModelViewSet):
         except Exception as e:
             return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
-        
+
 
 class OrderViewSet(viewsets.ModelViewSet):
     queryset = Order.objects.all()
     serializer_class = OrderSerializer
     permission_classes = [permissions.IsAuthenticated]
-
-    # Add pagination
-    pagination_class = CustomPagination
 
     def get_queryset(self):
         return Order.objects.all()
@@ -224,9 +190,160 @@ class OrderViewSet(viewsets.ModelViewSet):
         except Exception as e:
             return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
-        
+
 
 ###OBJECT-ACTIONS-VIEWSETS-ENDS###
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

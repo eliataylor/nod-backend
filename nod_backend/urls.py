@@ -1,31 +1,21 @@
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-from .views import *
+###OBJECT-ACTIONS-URL-IMPORTS-STARTS###
 from rest_framework.routers import DefaultRouter
-
 from django.conf import settings
 from django.urls import include, path
 from django.contrib import admin
-
-
 from rest_framework.schemas import get_schema_view
-from django.urls import path
+from .views import CustomerViewSet
+from .views import SupplierViewSet
+from .views import IngredientViewSet
+from .views import MealViewSet
+from .views import PlanViewSet
+from .views import OrderItemViewSet
+from .views import OrderViewSet
+###OBJECT-ACTIONS-URL-IMPORTS-ENDS###
+
+
 
 ###OBJECT-ACTIONS-URLS-STARTS###
 
@@ -38,7 +28,7 @@ router.register(r'api/plan', PlanViewSet, basename='plan')
 router.register(r'api/order_item', OrderItemViewSet, basename='order_item')
 router.register(r'api/order', OrderViewSet, basename='order')
 
-###OBJECT-ACTIONS-URLS-ENDS###
+
 
 """
 path('schema/', get_schema_view(
@@ -77,6 +67,10 @@ urlpatterns.extend(router.urls)
 
 
 
+
+
+
+###OBJECT-ACTIONS-URLS-ENDS###
 
 
 

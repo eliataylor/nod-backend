@@ -19,7 +19,11 @@ INSTALLED_APPS += [
 
 EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
 
-# ALLOWED_HOSTS = ["*"]
+ALLOWED_HOSTS = [
+    "localhost",
+    "127.0.0.1:8000",
+    "127.0.0.1"
+]
 # CORS_ALLOW_ALL_ORIGINS = True
 
 try:
