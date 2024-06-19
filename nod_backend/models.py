@@ -1,4 +1,6 @@
-###OBJECT-ACTIONS-MODEL_IMPORTS-STARTS###
+
+
+####OBJECT-ACTIONS-MODEL_IMPORTS-STARTS####
 from django.db import models
 from django.contrib.auth.models import User
 from django.contrib import admin
@@ -11,19 +13,21 @@ from django.utils.text import slugify
 from django.db.models.signals import pre_save
 from django.dispatch import receiver
 from djmoney.models.fields import MoneyField
-###OBJECT-ACTIONS-MODEL_IMPORTS-ENDS###
+####OBJECT-ACTIONS-MODEL_IMPORTS-ENDS####
 
-###OBJECT-ACTIONS-PRE-HELPERS-STARTS###
+
+
+####OBJECT-ACTIONS-PRE-HELPERS-STARTS####
 
 def validate_phone_number(value):
                         phone_regex = re.compile(r'^\+?1?\d{9,15}$')
                         if not phone_regex.match(value):
                             raise ValidationError("Phone number must be entered in the format: '+999999999'. Up to 15 digits allowed.")
-###OBJECT-ACTIONS-PRE-HELPERS-ENDS###
+####OBJECT-ACTIONS-PRE-HELPERS-ENDS####
 
 
 
-###OBJECT-ACTIONS-MODELS-STARTS###
+####OBJECT-ACTIONS-MODELS-STARTS####
 class SuperModel(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     modified = models.DateTimeField(auto_now=True)
@@ -82,16 +86,14 @@ class Customer(SuperModel):
     delivery_address = AddressField(related_name='+', blank=True, null=True)
 
 
-    ###SAVE_OVERRIDE###
     def save(self, *args, **kwargs):
         if not self.id:
             self.id = slugify(self.title)
         super().save(*args, **kwargs)
-
 class CustomerAdmin(admin.ModelAdmin):
-    readonly_fields = ('id',)
-
+                    readonly_fields = ('id',)
 admin.site.register(Customer, CustomerAdmin)
+
 
 class Supplier(SuperModel):
     class Meta:
@@ -104,16 +106,14 @@ class Supplier(SuperModel):
     website = models.URLField(blank=True, null=True)
 
 
-    ###SAVE_OVERRIDE###
     def save(self, *args, **kwargs):
         if not self.id:
             self.id = slugify(self.title)
         super().save(*args, **kwargs)
-
 class SupplierAdmin(admin.ModelAdmin):
-    readonly_fields = ('id',)
-
+                    readonly_fields = ('id',)
 admin.site.register(Supplier, SupplierAdmin)
+
 
 class Ingredient(SuperModel):
     class Meta:
@@ -128,16 +128,14 @@ class Ingredient(SuperModel):
     out_of_season_price = models.DecimalField(max_digits=10,  decimal_places=2, blank=True, null=True)
 
 
-    ###SAVE_OVERRIDE###
     def save(self, *args, **kwargs):
         if not self.id:
             self.id = slugify(self.title)
         super().save(*args, **kwargs)
-
 class IngredientAdmin(admin.ModelAdmin):
-    readonly_fields = ('id',)
-
+                    readonly_fields = ('id',)
 admin.site.register(Ingredient, IngredientAdmin)
+
 
 class Meal(SuperModel):
     class Meta:
@@ -160,16 +158,14 @@ class Meal(SuperModel):
     suppliers = models.ManyToManyField('Supplier', blank=True, null=True)
 
 
-    ###SAVE_OVERRIDE###
     def save(self, *args, **kwargs):
         if not self.id:
             self.id = slugify(self.title)
         super().save(*args, **kwargs)
-
 class MealAdmin(admin.ModelAdmin):
-    readonly_fields = ('id',)
-
+                    readonly_fields = ('id',)
 admin.site.register(Meal, MealAdmin)
+
 
 class Plan(SuperModel):
     class Meta:
@@ -183,16 +179,14 @@ class Plan(SuperModel):
     date = models.DateField(blank=True, null=True)
 
 
-    ###SAVE_OVERRIDE###
     def save(self, *args, **kwargs):
         if not self.id:
             self.id = slugify(self.title)
         super().save(*args, **kwargs)
-
 class PlanAdmin(admin.ModelAdmin):
-    readonly_fields = ('id',)
-
+                    readonly_fields = ('id',)
 admin.site.register(Plan, PlanAdmin)
+
 
 class OrderItem(SuperModel):
     class Meta:
@@ -206,16 +200,14 @@ class OrderItem(SuperModel):
     servings = models.IntegerField(default=1)
 
 
-    ###SAVE_OVERRIDE###
     def save(self, *args, **kwargs):
         if not self.id:
             self.id = slugify(self.title)
         super().save(*args, **kwargs)
-
 class OrderItemAdmin(admin.ModelAdmin):
-    readonly_fields = ('id',)
-
+                    readonly_fields = ('id',)
 admin.site.register(OrderItem, OrderItemAdmin)
+
 
 class Order(SuperModel):
     class Meta:
@@ -238,21 +230,19 @@ class Order(SuperModel):
     status = models.CharField(max_length=20,  default="unpaid", choices=StatusChoices.choices)
 
 
-    ###SAVE_OVERRIDE###
     def save(self, *args, **kwargs):
         if not self.id:
             self.id = slugify(self.title)
         super().save(*args, **kwargs)
-
 class OrderAdmin(admin.ModelAdmin):
-    readonly_fields = ('id',)
-
+                    readonly_fields = ('id',)
 admin.site.register(Order, OrderAdmin)
-###OBJECT-ACTIONS-MODELS-ENDS###
+
+####OBJECT-ACTIONS-MODELS-ENDS####
 
 
 
-###OBJECT-ACTIONS-POST-HELPERS-STARTS###
+####OBJECT-ACTIONS-POST-HELPERS-STARTS####
 
 @receiver(pre_save, sender=Supplier)
 def generate_slug_supplier_id(sender, instance, **kwargs):
@@ -277,7 +267,11 @@ def generate_slug_plan_id(sender, instance, **kwargs):
     if not instance.id:
         instance.id = slugify(instance.name)
 
-###OBJECT-ACTIONS-POST-HELPERS-ENDS###
+####OBJECT-ACTIONS-POST-HELPERS-ENDS####
+
+
+
+
 
 
 

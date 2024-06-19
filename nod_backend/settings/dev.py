@@ -6,7 +6,6 @@ DEBUG = True
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = "django-insecure--9&$hhrd-c!#$r)^on)uvz7x^4pdhel_e4uefy+dhf9k3shfm^"
 
-# SECURITY WARNING: define the correct hosts in production!
 CORS_ALLOWED_ORIGINS = [
     "https://nourishmentondemand.com",
     "https://www.nourishmentondemand.com",
@@ -14,11 +13,18 @@ CORS_ALLOWED_ORIGINS = [
     "http://127.0.0.1:3000"
 ]
 
-# ALLOWED_HOSTS = ["*"]
-# CORS_ALLOW_ALL_ORIGINS = True
+INSTALLED_APPS += [
+    'django_extensions',  # Example of a dev-only app
+]
 
 EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
 
+ALLOWED_HOSTS = [
+    "localhost",
+    "127.0.0.1:8000",
+    "127.0.0.1"
+]
+# CORS_ALLOW_ALL_ORIGINS = True
 
 try:
     from .local import *

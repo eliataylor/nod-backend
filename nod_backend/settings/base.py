@@ -53,7 +53,8 @@ REST_FRAMEWORK = {
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
     'PAGE_SIZE': 15,
     'DEFAULT_PERMISSION_CLASSES': (
-        'rest_framework.permissions.IsAuthenticated',
+        # 'rest_framework.permissions.IsAuthenticated',
+        'rest_framework.permissions.IsAuthenticatedOrReadOnly',
     ),
 }
 
@@ -154,6 +155,12 @@ STORAGES = {
         "BACKEND": "django.contrib.staticfiles.storage.ManifestStaticFilesStorage",
     },
 }
+
+ALLOWED_HOSTS = [
+    "https://nourishmentondemand.com",
+    "https://www.nourishmentondemand.com",
+    "https://lit-tor-86091-5dd2d3fd4e90.herokuapp.com"
+]
 
 CORS_ALLOWED_ORIGINS = [
     "https://nourishmentondemand.com",

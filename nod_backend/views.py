@@ -1,4 +1,6 @@
-###OBJECT-ACTIONS-VIEWSET-IMPORTS-STARTS###
+
+
+####OBJECT-ACTIONS-VIEWSET-IMPORTS-STARTS####
 from rest_framework import viewsets, permissions, status, pagination
 from rest_framework.response import Response
 from rest_framework.exceptions import ValidationError
@@ -19,13 +21,15 @@ from .models import OrderItem
 from .serializers import OrderItemSerializer
 from .models import Order
 from .serializers import OrderSerializer
-###OBJECT-ACTIONS-VIEWSET-IMPORTS-ENDS###
+####OBJECT-ACTIONS-VIEWSET-IMPORTS-ENDS####
 
-###OBJECT-ACTIONS-VIEWSETS-STARTS###
+
+
+####OBJECT-ACTIONS-VIEWSETS-STARTS####
 class CustomerViewSet(viewsets.ModelViewSet):
     queryset = Customer.objects.all()
     serializer_class = CustomerSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
 
     def get_queryset(self):
         return Customer.objects.all()
@@ -93,7 +97,7 @@ class CustomerViewSet(viewsets.ModelViewSet):
 class SupplierViewSet(viewsets.ModelViewSet):
     queryset = Supplier.objects.all()
     serializer_class = SupplierSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
 
     def get_queryset(self):
         return Supplier.objects.all()
@@ -161,7 +165,7 @@ class SupplierViewSet(viewsets.ModelViewSet):
 class IngredientViewSet(viewsets.ModelViewSet):
     queryset = Ingredient.objects.all()
     serializer_class = IngredientSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
 
     def get_queryset(self):
         return Ingredient.objects.all()
@@ -229,7 +233,7 @@ class IngredientViewSet(viewsets.ModelViewSet):
 class MealViewSet(viewsets.ModelViewSet):
     queryset = Meal.objects.all()
     serializer_class = MealSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
 
     def get_queryset(self):
         return Meal.objects.all()
@@ -297,7 +301,7 @@ class MealViewSet(viewsets.ModelViewSet):
 class PlanViewSet(viewsets.ModelViewSet):
     queryset = Plan.objects.all()
     serializer_class = PlanSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
 
     def get_queryset(self):
         return Plan.objects.all()
@@ -365,7 +369,7 @@ class PlanViewSet(viewsets.ModelViewSet):
 class OrderItemViewSet(viewsets.ModelViewSet):
     queryset = OrderItem.objects.all()
     serializer_class = OrderItemSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
 
     def get_queryset(self):
         return OrderItem.objects.all()
@@ -433,7 +437,7 @@ class OrderItemViewSet(viewsets.ModelViewSet):
 class OrderViewSet(viewsets.ModelViewSet):
     queryset = Order.objects.all()
     serializer_class = OrderSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
 
     def get_queryset(self):
         return Order.objects.all()
@@ -498,11 +502,7 @@ class OrderViewSet(viewsets.ModelViewSet):
 
 
 
-###OBJECT-ACTIONS-VIEWSETS-ENDS###
-
-
-
-
+####OBJECT-ACTIONS-VIEWSETS-ENDS####
 
 
 
