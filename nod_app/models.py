@@ -31,7 +31,7 @@ def validate_phone_number(value):
 class SuperModel(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     modified = models.DateTimeField(auto_now=True)
-    author = models.ForeignKey(get_user_model(), on_delete=models.SET_NULL, null=True, blank=True)
+    author = models.ForeignKey(get_user_model(), on_delete=models.SET_NULL, null=True, blank=True, related_name='+')
     class Meta:
         abstract = True
         # verbose_name = 'My Model'  # Default: model's verbose name in singular form
@@ -82,13 +82,12 @@ class Customer(SuperModel):
     email = models.EmailField()
     billing_name = models.CharField(max_length=255, blank=True, null=True)
     billing_address = AddressField(related_name='+', blank=True, null=True)
-    delivery_name = models.CharField(max_length=255, blank=True, null=True)
     delivery_address = AddressField(related_name='+', blank=True, null=True)
 
 
     def save(self, *args, **kwargs):
         if not self.id:
-            self.id = slugify(self.title)
+            self.id = slugify(self)
         super().save(*args, **kwargs)
 class CustomerAdmin(admin.ModelAdmin):
                     readonly_fields = ('id',)
@@ -108,7 +107,7 @@ class Supplier(SuperModel):
 
     def save(self, *args, **kwargs):
         if not self.id:
-            self.id = slugify(self.title)
+            self.id = slugify(selfname)
         super().save(*args, **kwargs)
 class SupplierAdmin(admin.ModelAdmin):
                     readonly_fields = ('id',)
@@ -122,7 +121,7 @@ class Ingredient(SuperModel):
     id = models.SlugField(primary_key=True, unique=True, editable=False)
     title = models.CharField(max_length=255)
     image = models.ImageField(upload_to='media/ingredients', blank=True, null=True)
-    supplier = models.ForeignKey('Supplier',  on_delete=models.CASCADE, blank=True, null=True)
+    supplier = models.OneToOneField('Supplier',  on_delete=models.CASCADE, blank=True, null=True)
     seasonal = models.BooleanField(blank=True, null=True)
     in_season_price = models.DecimalField(max_digits=10,  decimal_places=2, blank=True, null=True)
     out_of_season_price = models.DecimalField(max_digits=10,  decimal_places=2, blank=True, null=True)
@@ -130,7 +129,7 @@ class Ingredient(SuperModel):
 
     def save(self, *args, **kwargs):
         if not self.id:
-            self.id = slugify(self.title)
+            self.id = slugify(selftitle)
         super().save(*args, **kwargs)
 class IngredientAdmin(admin.ModelAdmin):
                     readonly_fields = ('id',)
@@ -154,13 +153,13 @@ class Meal(SuperModel):
     photo = models.FileField(upload_to='media/calendar')
     internal_cost = models.DecimalField(max_digits=10,  decimal_places=2, blank=True, null=True)
     public_price = models.DecimalField(max_digits=10,   decimal_places=2,  default=16, blank=True, null=True)
-    ingredients = models.ManyToManyField('Ingredient', blank=True, null=True)
-    suppliers = models.ManyToManyField('Supplier', blank=True, null=True)
+    ingredients = models.ForeignKey('Ingredient',  on_delete=models.CASCADE, blank=True, null=True)
+    suppliers = models.ForeignKey('Supplier',  on_delete=models.CASCADE, blank=True, null=True)
 
 
     def save(self, *args, **kwargs):
         if not self.id:
-            self.id = slugify(self.title)
+            self.id = slugify(selftitle)
         super().save(*args, **kwargs)
 class MealAdmin(admin.ModelAdmin):
                     readonly_fields = ('id',)
@@ -174,14 +173,14 @@ class Plan(SuperModel):
     id = models.SlugField(primary_key=True, unique=True, editable=False)
     name = models.CharField(max_length=255)
     description = models.TextField(blank=True, null=True)
-    meals = models.ManyToManyField('Meal')
+    meals = models.ForeignKey('Meal', on_delete=models.CASCADE)
     price = MoneyField(decimal_places=2,  default_currency='USD',  max_digits=11, blank=True, null=True)
     date = models.DateField(blank=True, null=True)
 
 
     def save(self, *args, **kwargs):
         if not self.id:
-            self.id = slugify(self.title)
+            self.id = slugify(selfname)
         super().save(*args, **kwargs)
 class PlanAdmin(admin.ModelAdmin):
                     readonly_fields = ('id',)
@@ -195,14 +194,14 @@ class OrderItem(SuperModel):
     id = models.AutoField(primary_key=True)
     date = models.DateField()
     delivery_date = models.DateField()
-    meal = models.ForeignKey('Meal',  on_delete=models.CASCADE, blank=True, null=True)
-    meal_menu = models.ForeignKey('Plan',  on_delete=models.CASCADE, blank=True, null=True)
+    meal = models.OneToOneField('Meal',  on_delete=models.CASCADE, blank=True, null=True)
+    meal_menu = models.OneToOneField('Plan',  on_delete=models.CASCADE, blank=True, null=True)
     servings = models.IntegerField(default=1)
 
 
     def save(self, *args, **kwargs):
         if not self.id:
-            self.id = slugify(self.title)
+            self.id = slugify(self)
         super().save(*args, **kwargs)
 class OrderItemAdmin(admin.ModelAdmin):
                     readonly_fields = ('id',)
@@ -223,16 +222,16 @@ class Order(SuperModel):
     start_date = models.DateField()
     final_price = models.DecimalField(max_digits=10, decimal_places=2)
     delivery_instructions = models.TextField(blank=True, null=True)
-    customizations = models.CharField(max_length=255)
+    customizations = models.TextField()
     glass_containers = models.BooleanField(default="0", blank=True, null=True)
     recurring = models.BooleanField(default="0", blank=True, null=True)
-    order_items = models.ManyToManyField('OrderItem')
+    order_items = models.ForeignKey('OrderItem', on_delete=models.CASCADE)
     status = models.CharField(max_length=20,  default="unpaid", choices=StatusChoices.choices)
 
 
     def save(self, *args, **kwargs):
         if not self.id:
-            self.id = slugify(self.title)
+            self.id = slugify(self)
         super().save(*args, **kwargs)
 class OrderAdmin(admin.ModelAdmin):
                     readonly_fields = ('id',)
@@ -268,6 +267,10 @@ def generate_slug_plan_id(sender, instance, **kwargs):
         instance.id = slugify(instance.name)
 
 ####OBJECT-ACTIONS-POST-HELPERS-ENDS####
+
+
+
+
 
 
 
