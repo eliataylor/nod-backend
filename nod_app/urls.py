@@ -1,5 +1,3 @@
-
-
 ####OBJECT-ACTIONS-URL-IMPORTS-STARTS####
 from rest_framework.routers import DefaultRouter
 from django.conf import settings
@@ -14,8 +12,6 @@ from .views import PlanViewSet
 from .views import OrderItemViewSet
 from .views import OrderViewSet
 ####OBJECT-ACTIONS-URL-IMPORTS-ENDS####
-
-
 
 ####OBJECT-ACTIONS-URLS-STARTS####
 
@@ -37,9 +33,16 @@ path('schema/', get_schema_view(
 """
 
 urlpatterns = router.urls
+
+
+
+
+
+
+
+
+
 ####OBJECT-ACTIONS-URLS-ENDS####
-
-
 
 
 
