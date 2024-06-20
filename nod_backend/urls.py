@@ -1,9 +1,19 @@
+from django.conf import settings
 from django.urls import include, path
 from django.contrib import admin
-from django.conf import settings
+from rest_framework.schemas import get_schema_view
+
+"""
+schema_view = get_schema_view(
+    title="NOD API",
+    description="API",
+    version="1.0.0"
+)
+"""
 
 urlpatterns = [
     path("admin/", admin.site.urls),
+# path('schema/', schema_view),
     path('', include("nod_app.urls")),
 ]
 

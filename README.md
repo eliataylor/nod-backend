@@ -39,7 +39,7 @@ This project is a simple Django 5 application that exposes all CRUD (Create, Rea
 4. **Apply migrations:**
 
     ```sh
-    python manage.py migrate
+    python manage.py migrate --run-syncdb
     ```
 
 5. **Create a superuser:**
