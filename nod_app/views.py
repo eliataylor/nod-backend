@@ -7,6 +7,8 @@ from rest_framework.exceptions import ValidationError
 from django.utils.decorators import method_decorator
 from django.views.decorators.cache import cache_page
 from rest_framework.decorators import action
+from django.http import JsonResponse
+from django.core.management import call_command
 from .models import Customer
 from .serializers import CustomerSerializer
 from .models import Supplier
@@ -541,6 +543,40 @@ class OrderViewSet(viewsets.ModelViewSet):
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+def migrate(request):
+    call_command('migrate')
+    return JsonResponse({'status': 'migrations complete'})
+
+def collectstatic(request):
+    call_command('collectstatic', '--noinput')
+    return JsonResponse({'status': 'static files collected'})
+
+
+
+
+####OBJECT-ACTIONS-CORE-STARTS####
+def migrate(request):
+    call_command('migrate')
+    return JsonResponse({'status': 'migrations complete'})
+
+def collectstatic(request):
+    call_command('collectstatic', '--noinput')
+    return JsonResponse({'status': 'static files collected'})
+
+
+####OBJECT-ACTIONS-CORE-ENDS####
 
 
 
