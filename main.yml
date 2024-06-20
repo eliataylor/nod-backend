@@ -1,22 +1,22 @@
-name: Deploy Django App to Cloud Run
+name: Deploy NOD Backend to Cloud Run
 
 on:
   push:
     branches:
-      - main
+      - master
 
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
 
     env:
-      PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
+      PROJECT_ID: ${{ secrets.GS_PROJECT_NUM }}
       SERVICE_NAME: django-app
-      REGION: us-central1
+      REGION: ${{ secrets.GS_REGION }}
       MYSQL_INSTANCE: ${{ secrets.MYSQL_INSTANCE }}
-      MYSQL_DATABASE: ${{ secrets.MYSQL_DATABASE }}
+      MYSQL_DATABASE: ${{ secrets.MYSQL_DB }}
       MYSQL_USER: ${{ secrets.MYSQL_USER }}
-      MYSQL_PASSWORD: ${{ secrets.MYSQL_PASSWORD }}
+      MYSQL_PASSWORD: ${{ secrets.MYSQL_PASS }}
 
     steps:
       - name: Checkout code
