@@ -4,7 +4,8 @@ from .base import *
 DEBUG = True
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = "django-insecure--9&$hhrd-c!#$r)^on)uvz7x^4pdhel_e4uefy+dhf9k3shfm^"
+# SECRET_KEY = "django-insecure--9&$hhrd-c!#$r)^on)uvz7x^4pdhel_e4uefy+dhf9k3shfm^"
+SECRET_KEY = os.environ["SECRET_KEY"]
 
 CORS_ALLOWED_ORIGINS = [
     "https://nourishmentondemand.com",

@@ -4,7 +4,7 @@ from .base import *
 
 ENVIRONMENT = os.environ.get('DJANGO_ENV', 'dev')
 
-if ENVIRONMENT == 'production':
-    from .production import *
-else:
+if ENVIRONMENT == 'development':
     from .dev import *
+else:
+    from .production import *
