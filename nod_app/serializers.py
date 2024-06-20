@@ -17,6 +17,15 @@ from .models import Order
 
 ####OBJECT-ACTIONS-SERIALIZERS-STARTS####
 class SubFieldRelatedField(serializers.PrimaryKeyRelatedField):
+    # META >
+    # exclude = ()  # Default: empty tuple, no fields excluded
+    # depth = 0  # Default: 0, no nested serialization
+    # read_only_fields = ()  # Default: empty tuple, no read-only fields
+    # write_only_fields = ()  # Default: empty tuple, no write-only fields
+    # extra_kwargs = {}  # Default: empty dictionary, no extra field configurations
+    # validators = []  # Default: empty list, no validators defined
+    # error_messages = {}  # Default: empty dictionary, no custom error messages
+
     def __init__(self, **kwargs):
         self.slug_field = kwargs.pop('slug_field', None)
         super(SubFieldRelatedField, self).__init__(**kwargs)
@@ -57,87 +66,64 @@ class CustomerSerializer(CustomSerializer):
     class Meta:
         model = Customer
         fields = '__all__'
-        # exclude = ()  # Default: empty tuple, no fields excluded
-        # depth = 0  # Default: 0, no nested serialization
-        # read_only_fields = ()  # Default: empty tuple, no read-only fields
-        # write_only_fields = ()  # Default: empty tuple, no write-only fields
-        # extra_kwargs = {}  # Default: empty dictionary, no extra field configurations
-        # validators = []  # Default: empty list, no validators defined
-        # error_messages = {}  # Default: empty dictionary, no custom error messages
 
 class SupplierSerializer(CustomSerializer):
     class Meta:
         model = Supplier
         fields = '__all__'
-        # exclude = ()  # Default: empty tuple, no fields excluded
-        # depth = 0  # Default: 0, no nested serialization
-        # read_only_fields = ()  # Default: empty tuple, no read-only fields
-        # write_only_fields = ()  # Default: empty tuple, no write-only fields
-        # extra_kwargs = {}  # Default: empty dictionary, no extra field configurations
-        # validators = []  # Default: empty list, no validators defined
-        # error_messages = {}  # Default: empty dictionary, no custom error messages
 
 class IngredientSerializer(CustomSerializer):
     class Meta:
         model = Ingredient
         fields = '__all__'
-        # exclude = ()  # Default: empty tuple, no fields excluded
-        # depth = 0  # Default: 0, no nested serialization
-        # read_only_fields = ()  # Default: empty tuple, no read-only fields
-        # write_only_fields = ()  # Default: empty tuple, no write-only fields
-        # extra_kwargs = {}  # Default: empty dictionary, no extra field configurations
-        # validators = []  # Default: empty list, no validators defined
-        # error_messages = {}  # Default: empty dictionary, no custom error messages
 
 class MealSerializer(CustomSerializer):
     class Meta:
         model = Meal
         fields = '__all__'
-        # exclude = ()  # Default: empty tuple, no fields excluded
-        # depth = 0  # Default: 0, no nested serialization
-        # read_only_fields = ()  # Default: empty tuple, no read-only fields
-        # write_only_fields = ()  # Default: empty tuple, no write-only fields
-        # extra_kwargs = {}  # Default: empty dictionary, no extra field configurations
-        # validators = []  # Default: empty list, no validators defined
-        # error_messages = {}  # Default: empty dictionary, no custom error messages
 
 class PlanSerializer(CustomSerializer):
     class Meta:
         model = Plan
         fields = '__all__'
-        # exclude = ()  # Default: empty tuple, no fields excluded
-        # depth = 0  # Default: 0, no nested serialization
-        # read_only_fields = ()  # Default: empty tuple, no read-only fields
-        # write_only_fields = ()  # Default: empty tuple, no write-only fields
-        # extra_kwargs = {}  # Default: empty dictionary, no extra field configurations
-        # validators = []  # Default: empty list, no validators defined
-        # error_messages = {}  # Default: empty dictionary, no custom error messages
 
 class OrderItemSerializer(CustomSerializer):
     class Meta:
         model = OrderItem
         fields = '__all__'
-        # exclude = ()  # Default: empty tuple, no fields excluded
-        # depth = 0  # Default: 0, no nested serialization
-        # read_only_fields = ()  # Default: empty tuple, no read-only fields
-        # write_only_fields = ()  # Default: empty tuple, no write-only fields
-        # extra_kwargs = {}  # Default: empty dictionary, no extra field configurations
-        # validators = []  # Default: empty list, no validators defined
-        # error_messages = {}  # Default: empty dictionary, no custom error messages
 
 class OrderSerializer(CustomSerializer):
     class Meta:
         model = Order
         fields = '__all__'
-        # exclude = ()  # Default: empty tuple, no fields excluded
-        # depth = 0  # Default: 0, no nested serialization
-        # read_only_fields = ()  # Default: empty tuple, no read-only fields
-        # write_only_fields = ()  # Default: empty tuple, no write-only fields
-        # extra_kwargs = {}  # Default: empty dictionary, no extra field configurations
-        # validators = []  # Default: empty list, no validators defined
-        # error_messages = {}  # Default: empty dictionary, no custom error messages
 
 ####OBJECT-ACTIONS-SERIALIZERS-ENDS####
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
