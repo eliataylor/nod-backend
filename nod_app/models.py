@@ -50,8 +50,6 @@ class SuperModel(models.Model):
         # indexes = []  # Default: empty list, no indexes defined
         # ordering = ()  # Default: empty tuple, no ordering defined
 
-
-
     def __str__(self):
         if hasattr(self, "title"):
             return self.title
@@ -65,7 +63,7 @@ class SuperModel(models.Model):
         return None
 
     def save(self, *args, **kwargs):
-        if not self.id and hasattr(self, 'author') and not self.author_id:
+        if hasattr(self, 'author') and not self.author:
             request = kwargs.pop('request', None)  # Remove 'request' from kwargs
             if request:
                 self.author = self.get_current_user(request)
@@ -86,6 +84,7 @@ class Customer(SuperModel):
 
 
     
+
 
 
 class CustomerAdmin(admin.ModelAdmin):
@@ -109,6 +108,7 @@ class Supplier(SuperModel):
         if not self.id:
             self.id = slugify(self.name)
         super().save(*args, **kwargs)
+
 
 
 class SupplierAdmin(admin.ModelAdmin):
@@ -136,6 +136,7 @@ class Ingredient(SuperModel):
         super().save(*args, **kwargs)
 
 
+
 class IngredientAdmin(admin.ModelAdmin):
     readonly_fields = ('id',)
 
@@ -156,17 +157,18 @@ class Meal(SuperModel):
     title = models.CharField(max_length=255)
     description = models.CharField(max_length=255)
     bld = models.CharField(max_length=20, choices=BldChoices.choices)
-    photo = models.FileField(upload_to='media/calendar')
+    photo = models.FileField(upload_to='media/calendar', blank=True, null=True)
     internal_cost = models.DecimalField(max_digits=10,  decimal_places=2, blank=True, null=True)
     public_price = models.DecimalField(max_digits=10,   decimal_places=2,  default=16, blank=True, null=True)
-    ingredients = models.ForeignKey('Ingredient',  on_delete=models.CASCADE, blank=True, null=True)
-    suppliers = models.ForeignKey('Supplier',  on_delete=models.CASCADE, blank=True, null=True)
+    ingredients = models.ManyToManyField('Ingredient', blank=True)
+    suppliers = models.ManyToManyField('Supplier', blank=True)
 
 
     def save(self, *args, **kwargs):
         if not self.id:
             self.id = slugify(self.title)
         super().save(*args, **kwargs)
+
 
 
 class MealAdmin(admin.ModelAdmin):
@@ -182,7 +184,7 @@ class Plan(SuperModel):
     id = models.SlugField(primary_key=True, unique=True, editable=False)
     name = models.CharField(max_length=255)
     description = models.TextField(blank=True, null=True)
-    meals = models.ForeignKey('Meal', on_delete=models.CASCADE)
+    meals = models.ManyToManyField('Meal')
     price = MoneyField(decimal_places=2,  default_currency='USD',  max_digits=11, blank=True, null=True)
     date = models.DateField(blank=True, null=True)
 
@@ -191,6 +193,7 @@ class Plan(SuperModel):
         if not self.id:
             self.id = slugify(self.name)
         super().save(*args, **kwargs)
+
 
 
 class PlanAdmin(admin.ModelAdmin):
@@ -212,6 +215,7 @@ class OrderItem(SuperModel):
 
 
     
+
 
 
 class OrderItemAdmin(admin.ModelAdmin):
@@ -237,11 +241,12 @@ class Order(SuperModel):
     customizations = models.TextField()
     glass_containers = models.BooleanField(default="0", blank=True, null=True)
     recurring = models.BooleanField(default="0", blank=True, null=True)
-    order_items = models.ForeignKey('OrderItem', on_delete=models.CASCADE)
+    order_items = models.ManyToManyField('OrderItem')
     status = models.CharField(max_length=20,  default="unpaid", choices=StatusChoices.choices)
 
 
     
+
 
 
 class OrderAdmin(admin.ModelAdmin):
@@ -279,6 +284,58 @@ def generate_slug_plan_id(sender, instance, **kwargs):
         instance.id = slugify(instance.name)
 
 ####OBJECT-ACTIONS-POST-HELPERS-ENDS####
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

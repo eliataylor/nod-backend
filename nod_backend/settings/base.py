@@ -24,7 +24,6 @@ BASE_DIR = os.path.dirname(PROJECT_DIR)
 # Application definition
 
 INSTALLED_APPS = [
-    'nod_backend',
     'rest_framework',
     'corsheaders',
     'address',
