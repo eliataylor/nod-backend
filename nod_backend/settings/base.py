@@ -53,6 +53,10 @@ MIDDLEWARE = [
 REST_FRAMEWORK = {
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
     'PAGE_SIZE': 15,
+    'DEFAULT_RENDERER_CLASSES': (
+        'rest_framework.renderers.JSONRenderer',
+        'rest_framework.renderers.BrowsableAPIRenderer',
+    ),
     'DEFAULT_PERMISSION_CLASSES': (
         # 'rest_framework.permissions.IsAuthenticated',
         'rest_framework.permissions.IsAuthenticatedOrReadOnly',
@@ -159,8 +163,7 @@ STORAGES = {
 
 ALLOWED_HOSTS = [
     "https://nourishmentondemand.com",
-    "https://www.nourishmentondemand.com",
-    "https://lit-tor-86091-5dd2d3fd4e90.herokuapp.com"
+    "https://www.nourishmentondemand.com"
 ]
 
 CORS_ALLOWED_ORIGINS = [

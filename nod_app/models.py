@@ -85,12 +85,12 @@ class Customer(SuperModel):
     delivery_address = AddressField(related_name='+', blank=True, null=True)
 
 
-    def save(self, *args, **kwargs):
-        if not self.id:
-            self.id = slugify(self)
-        super().save(*args, **kwargs)
+    
+
+
 class CustomerAdmin(admin.ModelAdmin):
-                    readonly_fields = ('id',)
+    readonly_fields = ('id',)
+
 admin.site.register(Customer, CustomerAdmin)
 
 
@@ -107,10 +107,13 @@ class Supplier(SuperModel):
 
     def save(self, *args, **kwargs):
         if not self.id:
-            self.id = slugify(selfname)
+            self.id = slugify(self.name)
         super().save(*args, **kwargs)
+
+
 class SupplierAdmin(admin.ModelAdmin):
-                    readonly_fields = ('id',)
+    readonly_fields = ('id',)
+
 admin.site.register(Supplier, SupplierAdmin)
 
 
@@ -129,10 +132,13 @@ class Ingredient(SuperModel):
 
     def save(self, *args, **kwargs):
         if not self.id:
-            self.id = slugify(selftitle)
+            self.id = slugify(self.title)
         super().save(*args, **kwargs)
+
+
 class IngredientAdmin(admin.ModelAdmin):
-                    readonly_fields = ('id',)
+    readonly_fields = ('id',)
+
 admin.site.register(Ingredient, IngredientAdmin)
 
 
@@ -159,10 +165,13 @@ class Meal(SuperModel):
 
     def save(self, *args, **kwargs):
         if not self.id:
-            self.id = slugify(selftitle)
+            self.id = slugify(self.title)
         super().save(*args, **kwargs)
+
+
 class MealAdmin(admin.ModelAdmin):
-                    readonly_fields = ('id',)
+    readonly_fields = ('id',)
+
 admin.site.register(Meal, MealAdmin)
 
 
@@ -180,10 +189,13 @@ class Plan(SuperModel):
 
     def save(self, *args, **kwargs):
         if not self.id:
-            self.id = slugify(selfname)
+            self.id = slugify(self.name)
         super().save(*args, **kwargs)
+
+
 class PlanAdmin(admin.ModelAdmin):
-                    readonly_fields = ('id',)
+    readonly_fields = ('id',)
+
 admin.site.register(Plan, PlanAdmin)
 
 
@@ -199,12 +211,12 @@ class OrderItem(SuperModel):
     servings = models.IntegerField(default=1)
 
 
-    def save(self, *args, **kwargs):
-        if not self.id:
-            self.id = slugify(self)
-        super().save(*args, **kwargs)
+    
+
+
 class OrderItemAdmin(admin.ModelAdmin):
-                    readonly_fields = ('id',)
+    readonly_fields = ('id',)
+
 admin.site.register(OrderItem, OrderItemAdmin)
 
 
@@ -229,12 +241,12 @@ class Order(SuperModel):
     status = models.CharField(max_length=20,  default="unpaid", choices=StatusChoices.choices)
 
 
-    def save(self, *args, **kwargs):
-        if not self.id:
-            self.id = slugify(self)
-        super().save(*args, **kwargs)
+    
+
+
 class OrderAdmin(admin.ModelAdmin):
-                    readonly_fields = ('id',)
+    readonly_fields = ('id',)
+
 admin.site.register(Order, OrderAdmin)
 
 ####OBJECT-ACTIONS-MODELS-ENDS####
@@ -267,6 +279,38 @@ def generate_slug_plan_id(sender, instance, **kwargs):
         instance.id = slugify(instance.name)
 
 ####OBJECT-ACTIONS-POST-HELPERS-ENDS####
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
