@@ -1,6 +1,7 @@
 ####OBJECT-ACTIONS-URL-IMPORTS-STARTS####
 from rest_framework.routers import DefaultRouter
 from django.urls import include, path
+from .views import migrate, collectstatic
 from .views import CustomerViewSet
 from .views import SupplierViewSet
 from .views import IngredientViewSet
@@ -23,9 +24,19 @@ router.register(r'api/plan', PlanViewSet, basename='plan')
 router.register(r'api/order_item', OrderItemViewSet, basename='order_item')
 router.register(r'api/order', OrderViewSet, basename='order')
 urlpatterns = [
+    path('migrate/', migrate, name='migrate'),
+    path('collectstatic/', collectstatic, name='collectstatic'),
     path('', include(router.urls)),
 ]
 ####OBJECT-ACTIONS-URLS-ENDS####
+
+
+
+
+
+
+
+
 
 
 
