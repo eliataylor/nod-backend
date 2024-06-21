@@ -33,6 +33,7 @@ GS_DEFAULT_ACL = 'publicRead'
 
 MEDIA_URL = f'https://storage.googleapis.com/{os.environ["GCP_BUCKET_NAME"]}/'
 
+""""
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.mysql",
@@ -41,6 +42,14 @@ DATABASES = {
         "PASSWORD": os.environ["MYSQL_PASS"],
         "HOST": os.environ["MYSQL_HOST"],
         "PORT": "3306",
+    }
+}
+"""
+
+DATABASES = {
+    "default": {
+        "ENGINE": "django.db.backends.sqlite3",
+        "NAME": os.path.join(BASE_DIR, "db.sqlite3"),
     }
 }
 
