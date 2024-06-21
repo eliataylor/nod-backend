@@ -7,7 +7,7 @@ DEBUG = False
 
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
-SECRET_KEY = os.environ["SECRET_KEY"]
+SECRET_KEY = os.environ["DJANGO_SECRET_KEY"]
 SECURE_SSL_REDIRECT = True
 SESSION_COOKIE_SECURE = True
 CSRF_COOKIE_SECURE = True
