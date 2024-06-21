@@ -1,21 +1,21 @@
 from .base import *
 from dotenv import load_dotenv
-from google.oauth2 import service_account
+# from google.oauth2 import service_account
 
-dotenv_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '../..')) + '/.env.dev'
-if os.path.exists(dotenv_path):
-    load_dotenv(dotenv_path=dotenv_path, override=True)
+# dotenv_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '../..')) + '/.env.dev'
+# if os.path.exists(dotenv_path):
+#     load_dotenv(dotenv_path=dotenv_path, override=True)
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
 # SECURITY WARNING: keep the secret key used in production secret!
 # SECRET_KEY = "django-insecure--9&$hhrd-c!#$r)^on)uvz7x^4pdhel_e4uefy+dhf9k3shfm^"
-SECRET_KEY = os.environ["DJANGO_SECRET_KEY"]
+SECRET_KEY = os.getenv("DJANGO_SECRET_KEY")
 
-GS_CREDENTIALS = service_account.Credentials.from_service_account_file(
-    os.path.join(BASE_DIR, os.environ['GCP_SA_KEY_PATH'])
-)
+# GS_CREDENTIALS = service_account.Credentials.from_service_account_file(
+#     os.path.join(BASE_DIR, os.getenv('GCP_SA_KEY'))
+# )
 
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
@@ -50,14 +50,21 @@ STORAGES = {
     },
 }
 
+# DATABASES = {
+#     "default": {
+#         "ENGINE": "django.db.backends.mysql",
+#         "NAME": os.getenv("MYSQL_DATABASE"),
+#         "USER": os.getenv("MYSQL_USER"),
+#         "PASSWORD": os.getenv("MYSQL_PASSWORD"),
+#         "HOST": "127.0.0.1",
+#         "PORT": "3306",
+#     }
+# }
+
 DATABASES = {
     "default": {
-        "ENGINE": "django.db.backends.mysql",
-        "NAME": os.environ["MYSQL_DB"],
-        "USER": os.environ["MYSQL_USER"],
-        "PASSWORD": os.environ["MYSQL_PASS"],
-        "HOST": "127.0.0.1",
-        "PORT": "3306",
+        "ENGINE": "django.db.backends.sqlite3",
+        "NAME": os.path.join(BASE_DIR, "db.sqlite3"),
     }
 }
 
