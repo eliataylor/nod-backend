@@ -18,16 +18,13 @@ SECURE_HSTS_INCLUDE_SUBDOMAINS = True  # Apply HSTS to all subdomains
 SECURE_HSTS_PRELOAD = True  # Allow the site to be included in browsers' HSTS preload list
 
 
-# Google Cloud Storage settings
-GS_BUCKET_NAME = 'nod_media'
 GS_CREDENTIALS = service_account.Credentials.from_service_account_file(
-    os.path.join(BASE_DIR, 'path/to/your-service-account-file.json')
+    os.path.join(BASE_DIR, os.environ['GCP_SA_KEY'])
 )
-
 DEFAULT_FILE_STORAGE = 'storages.backends.gcloud.GoogleCloudStorage'
 GS_DEFAULT_ACL = 'publicRead'
 
-MEDIA_URL = f'https://storage.googleapis.com/{GS_BUCKET_NAME}/'
+MEDIA_URL = f'https://storage.googleapis.com/{os.environ["GS_BUCKET_NAME"]}/'
 
 try:
     from .local import *
