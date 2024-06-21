@@ -57,7 +57,7 @@ jobs:
         #   MYSQL_PASSWORD: ${{ secrets.MYSQL_PASS }}
         #   GCP_BUCKET_NAME: ${{ vars.GCP_BUCKET_NAME }}
         with:
-          tags: ${{ vars.ARTIFACT_REGISTRY_URL }}/${{ vars.GCP_PROJECT_ID }}/nod_backend/${{ vars.GCP_SERVICE_NAME }}:${{ github.sha }}
+          tags: ${{ vars.ARTIFACT_REGISTRY_URL }}/${{ vars.GCP_PROJECT_ID }}/nod-backend/${{ vars.GCP_SERVICE_NAME }}:${{ github.sha }}
           push: true
           context: ${{ inputs.dockerContext }}
           file: ${{ inputs.dockerFilePath }}
@@ -79,7 +79,7 @@ jobs:
         with:
           service: ${{ vars.GCP_SERVICE_NAME }}
           region: ${{ env.REGION }}
-          image: '${{ vars.ARTIFACT_REGISTRY_URL }}/${{ vars.GCP_PROJECT_ID }}/nod_backend/${{ vars.GCP_SERVICE_NAME }}:${{ github.sha }}'
+          image: '${{ vars.ARTIFACT_REGISTRY_URL }}/${{ vars.GCP_PROJECT_ID }}/nod-backend/${{ vars.GCP_SERVICE_NAME }}:${{ github.sha }}'
           flags: '--platform managed --allow-unauthenticated'
           env_vars: |
             MYSQL_INSTANCE=${{ env.MYSQL_INSTANCE }}
