@@ -12,6 +12,10 @@ DEBUG = True
 # SECRET_KEY = "django-insecure--9&$hhrd-c!#$r)^on)uvz7x^4pdhel_e4uefy+dhf9k3shfm^"
 SECRET_KEY = os.environ["DJANGO_SECRET_KEY"]
 
+GS_CREDENTIALS = service_account.Credentials.from_service_account_file(
+    os.path.join(BASE_DIR, os.environ['GCP_SA_KEY_PATH'])
+)
+
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
     "http://127.0.0.1:3000",
