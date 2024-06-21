@@ -5,6 +5,13 @@ from google.oauth2 import service_account
 
 DEBUG = False
 
+CORS_ALLOWED_ORIGINS = [
+    "https://nourishmentondemand.com",
+    "https://www.nourishmentondemand.com",
+    "http://localhost:3000",
+    "http://127.0.0.1:3000",
+]
+
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 SECRET_KEY = os.environ["DJANGO_SECRET_KEY"]
@@ -25,6 +32,17 @@ DEFAULT_FILE_STORAGE = 'storages.backends.gcloud.GoogleCloudStorage'
 GS_DEFAULT_ACL = 'publicRead'
 
 MEDIA_URL = f'https://storage.googleapis.com/{os.environ["GCP_BUCKET_NAME"]}/'
+
+DATABASES = {
+    "default": {
+        "ENGINE": "django.db.backends.mysql",
+        "NAME": os.environ["MYSQL_DB"],
+        "USER": os.environ["MYSQL_USER"],
+        "PASSWORD": os.environ["MYSQL_PASS"],
+        "HOST": os.environ["MYSQL_HOST"],
+        "PORT": "3306",
+    }
+}
 
 try:
     from .local import *

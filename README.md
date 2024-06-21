@@ -14,8 +14,9 @@
 
 4. **Apply migrations:**
     ```sh
+    python manage.py migrate
     python manage.py migrate --run-syncdb
-    python manage.py migrate --run-syncdb
+    python manage.py makemigrations
     ```
 
 5. **Create a superuser:**

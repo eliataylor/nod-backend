@@ -1,4 +1,9 @@
 from .base import *
+from dotenv import load_dotenv
+
+dotenv_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '../..')) + '/.env.dev'
+if os.path.exists(dotenv_path):
+    load_dotenv(dotenv_path=dotenv_path, override=True)
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -8,10 +13,8 @@ DEBUG = True
 SECRET_KEY = os.environ["DJANGO_SECRET_KEY"]
 
 CORS_ALLOWED_ORIGINS = [
-    "https://nourishmentondemand.com",
-    "https://www.nourishmentondemand.com",
     "http://localhost:3000",
-    "http://127.0.0.1:3000"
+    "http://127.0.0.1:3000",
 ]
 
 INSTALLED_APPS += [
@@ -40,6 +43,17 @@ STORAGES = {
     "staticfiles": {
         "BACKEND": "django.contrib.staticfiles.storage.ManifestStaticFilesStorage",
     },
+}
+
+DATABASES = {
+    "default": {
+        "ENGINE": "django.db.backends.mysql",
+        "NAME": os.environ["MYSQL_DB"],
+        "USER": os.environ["MYSQL_USER"],
+        "PASSWORD": os.environ["MYSQL_PASS"],
+        "HOST": "127.0.0.1",
+        "PORT": "3306",
+    }
 }
 
 try:
