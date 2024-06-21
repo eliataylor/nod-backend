@@ -23,7 +23,6 @@ GS_DEFAULT_ACL = 'publicRead'
 
 MEDIA_URL = f'https://storage.googleapis.com/{os.getenv("GCP_BUCKET_NAME")}/'
 
-""""
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.mysql",
@@ -34,14 +33,16 @@ DATABASES = {
         "PORT": "3306",
     }
 }
-"""
 
+"""
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.sqlite3",
         "NAME": os.path.join(BASE_DIR, "db.sqlite3"),
     }
 }
+""""
+
 
 # Superuser creation settings
 SUPERUSER_USERNAME = os.getenv('DJANGO_SUPERUSER_USERNAME')
