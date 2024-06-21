@@ -45,6 +45,17 @@ jobs:
 
       - name: 'Build docker image'
         uses: docker/build-push-action@v5
+        env:
+          DJANGO_SECRET_KEY: ${{ secrets.DJANGO_SECRET_KEY }}
+          GCP_SA_KEY: ${{ secrets.GCP_SA_KEY }}
+          GCP_PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
+          SERVICE_NAME: ${{ secrets.GCP_SERVICE_NAME }}
+          GCP_REGION: ${{ secrets.GCP_REGION }}
+          MYSQL_INSTANCE: ${{ secrets.MYSQL_INSTANCE }}
+          MYSQL_DATABASE: ${{ secrets.MYSQL_DB }}
+          MYSQL_USER: ${{ secrets.MYSQL_USER }}
+          MYSQL_PASSWORD: ${{ secrets.MYSQL_PASS }}
+          GCP_BUCKET_NAME: ${{ vars.GCP_BUCKET_NAME }}
         with:
           tags: ${{ vars.ARTIFACT_REGISTRY_URL }}/${{ vars.GCP_PROJECT_ID }}/nod_backend/${{ vars.GCP_SERVICE_NAME }}:${{ github.sha }}
           push: true
@@ -52,10 +63,19 @@ jobs:
           file: ${{ inputs.dockerFilePath }}
           build-args: |
             "DJANGO_ENV=production"
-            "DJANGO_SECRET_KEY=uqI9nmzRlaqoYMApQhxpgbLJfGFwPiWmMOHxKbqTYydHqeRXMp"
+            "DJANGO_SECRET_KEY=${{ $DJANGO_SECRET_KEY }}"
             "GCP_SERVICE_NAME=nod-django-app"
             "GCP_REGION=us-west1"
-            "GCP_BUCKET_NAME=nod_django_prod"                        
+            "GCP_BUCKET_NAME=nod_django_prod"
+            "GCP_SA_KEY= ${{ $GCP_SA_KEY }}"
+            "GCP_PROJECT_ID: ${{ $GCP_PROJECT_ID }}"
+            "SERVICE_NAME: ${{ $GCP_SERVICE_NAME }}"
+            "GCP_REGION: ${{ $GCP_REGION }}"
+            "MYSQL_INSTANCE: ${{ $MYSQL_INSTANCE }}"
+            "MYSQL_DATABASE: ${{ $MYSQL_DB }}"
+            "MYSQL_USER: ${{ $MYSQL_USER }}"
+            "MYSQL_PASSWORD: ${{ $MYSQL_PASS }}"
+            "GCP_BUCKET_NAME: ${{ $GCP_BUCKET_NAME }}"
 
       - name: 'Deploy to Cloud Run'
         uses: 'google-github-actions/deploy-cloudrun@v2'
