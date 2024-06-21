@@ -45,7 +45,7 @@ jobs:
       - name: 'Build docker image'
         uses: docker/build-push-action@v5
         with:
-          tags: ${{ vars.ARTIFACT_REGISTRY_URL }}/${{ vars.GCP_PROJECT_ID }}/${{ inputs.repoName }}/${{ inputs.serviceName }}:${{ github.sha }}
+          tags: ${{ vars.ARTIFACT_REGISTRY_URL }}/${{ vars.GCP_PROJECT_ID }}/nod_backend/${{ env.SERVICE_NAME }}:${{ github.sha }}
           push: true
           context: ${{ inputs.dockerContext }}
           file: ${{ inputs.dockerFilePath }}
@@ -55,7 +55,7 @@ jobs:
         with:
           service: ${{ env.SERVICE_NAME }}
           region: ${{ env.REGION }}
-          image: '${{ vars.ARTIFACT_REGISTRY_URL }}/${{ vars.GCP_PROJECT_ID }}/${{ inputs.repoName }}/${{ env.SERVICE_NAME }}:${{ github.sha }}'
+          image: '${{ vars.ARTIFACT_REGISTRY_URL }}/${{ vars.GCP_PROJECT_ID }}/nod_backend/${{ env.SERVICE_NAME }}:${{ github.sha }}'
           flags: '--platform managed --allow-unauthenticated'
           env_vars: |
             MYSQL_INSTANCE=${{ env.MYSQL_INSTANCE }}
