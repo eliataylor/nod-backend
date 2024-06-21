@@ -7,6 +7,10 @@ DEBUG = False
 CORS_ALLOWED_ORIGINS = [
     "https://nourishmentondemand.com",
     "https://www.nourishmentondemand.com",
+    "https://*.nourishmentondemand.com",
+    "https://stage.nourishmentondemand.com",
+    "https://dev.nourishmentondemand.com",
+    "https://nod_django_prod.nourishmentondemand.com",
     "http://localhost:3000",
     "http://127.0.0.1:3000",
     "http://127.0.0.1:8000"
