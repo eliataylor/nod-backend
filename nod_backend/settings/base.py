@@ -150,6 +150,7 @@ MEDIA_URL = "/media/"
 
 ALLOWED_HOSTS = [
     "*.a.run.app",
+    "nod-django-app-7z6iwfp5aa-uw.a.run.app",
     "https://nourishmentondemand.com",
     "https://www.nourishmentondemand.com"
 ]
