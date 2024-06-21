@@ -25,10 +25,9 @@ jobs:
 
       - name: Verify GCP_SA_KEY
         run: |
-          echo "${{ secrets.GCP_SA_KEY }}" | jq empty || echo "${{ secrets.GCP_SA_KEY }}" | jq '. | tostring | .[:100]'
+          echo "First 100 characters of GCP_SA_KEY: ${GCP_SA_KEY:0:100}"
         env:
           GCP_SA_KEY: ${{ secrets.GCP_SA_KEY }}
-        shell: bash
 
       - name: Set up Google Cloud SDK
         uses: google-github-actions/setup-gcloud@v1
