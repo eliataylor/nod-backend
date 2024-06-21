@@ -32,7 +32,10 @@ ALLOWED_HOSTS = [
     "localhost",
     "127.0.0.1:8000",
     "127.0.0.1",
-    "nod-django-app-7z6iwfp5aa-uw.a.run.app"
+    "*.a.run.app",
+    "nod-django-app-7z6iwfp5aa-uw.a.run.app",
+    "https://nourishmentondemand.com",
+    "https://www.nourishmentondemand.com",
 ]
 # CORS_ALLOW_ALL_ORIGINS = True
 

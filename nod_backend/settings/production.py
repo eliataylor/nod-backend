@@ -1,22 +1,7 @@
 from .base import *
 import os
 
-
 DEBUG = False
-
-CORS_ALLOWED_ORIGINS = [
-    "https://nourishmentondemand.com",
-    "https://www.nourishmentondemand.com",
-    "https://*.nourishmentondemand.com",
-    "https://stage.nourishmentondemand.com",
-    "https://dev.nourishmentondemand.com",
-    "https://nod_django_prod.nourishmentondemand.com",
-    "https://nod-django-app-7z6iwfp5aa-uw.a.run.app",
-    "http://localhost:3000",
-    "http://127.0.0.1:3000",
-    "http://127.0.0.1:8000"
-]
-
 
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
