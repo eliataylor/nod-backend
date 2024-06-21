@@ -502,68 +502,7 @@ class OrderViewSet(viewsets.ModelViewSet):
         serializer = self.get_serializer(queryset, many=True)
         return Response(serializer.data)
 
-
-
 ####OBJECT-ACTIONS-VIEWSETS-ENDS####
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-def migrate(request):
-    call_command('migrate')
-    return JsonResponse({'status': 'migrations complete'})
-
-def collectstatic(request):
-    call_command('collectstatic', '--noinput')
-    return JsonResponse({'status': 'static files collected'})
-
-
 
 
 ####OBJECT-ACTIONS-CORE-STARTS####
@@ -574,8 +513,6 @@ def migrate(request):
 def collectstatic(request):
     call_command('collectstatic', '--noinput')
     return JsonResponse({'status': 'static files collected'})
-
-
 ####OBJECT-ACTIONS-CORE-ENDS####
 
 
