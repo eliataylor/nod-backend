@@ -24,7 +24,7 @@ GS_CREDENTIALS = service_account.Credentials.from_service_account_file(
 DEFAULT_FILE_STORAGE = 'storages.backends.gcloud.GoogleCloudStorage'
 GS_DEFAULT_ACL = 'publicRead'
 
-MEDIA_URL = f'https://storage.googleapis.com/{os.environ["GS_BUCKET_NAME"]}/'
+MEDIA_URL = f'https://storage.googleapis.com/{os.environ["GCP_BUCKET_NAME"]}/'
 
 try:
     from .local import *

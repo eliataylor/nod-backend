@@ -146,22 +146,8 @@ STATIC_URL = "/static/"
 MEDIA_ROOT = os.path.join(BASE_DIR, "media")
 MEDIA_URL = "/media/"
 
-# Default storage settings, with the staticfiles storage updated.
-# See https://docs.djangoproject.com/en/4.2/ref/settings/#std-setting-STORAGES
-STORAGES = {
-    "default": {
-        "BACKEND": "django.core.files.storage.FileSystemStorage",
-    },
-    # ManifestStaticFilesStorage is recommended in production, to prevent
-    # outdated JavaScript / CSS assets being served from cache
-    # (e.g. after a Wagtail upgrade).
-    # See https://docs.djangoproject.com/en/4.2/ref/contrib/staticfiles/#manifeststaticfilesstorage
-    "staticfiles": {
-        "BACKEND": "django.contrib.staticfiles.storage.ManifestStaticFilesStorage",
-    },
-}
-
 ALLOWED_HOSTS = [
+    "*.a.run.app",
     "https://nourishmentondemand.com",
     "https://www.nourishmentondemand.com"
 ]
@@ -172,6 +158,4 @@ CORS_ALLOWED_ORIGINS = [
 ]
 
 
-#### needs to be tracked in Object actions:
 DEFAULT_AUTO_FIELD='django.db.models.AutoField'
-GOOGLE_API_KEY = 'CHANGEME'
