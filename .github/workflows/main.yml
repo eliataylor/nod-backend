@@ -14,16 +14,6 @@ jobs:
     runs-on: ubuntu-latest
     environment: 'nod_django_prod'
 
-    # env:
-      # GCP_PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
-      # SERVICE_NAME: ${{ secrets.GCP_SERVICE_NAME }}
-      # GCP_REGION: ${{ secrets.GCP_REGION }}
-      # MYSQL_INSTANCE: ${{ secrets.MYSQL_INSTANCE }}
-      # MYSQL_DATABASE: ${{ secrets.MYSQL_DB }}
-      # MYSQL_USER: ${{ secrets.MYSQL_USER }}
-      # MYSQL_PASSWORD: ${{ secrets.MYSQL_PASS }}
-      # GCP_BUCKET_NAME: ${{ vars.GCP_BUCKET_NAME }}
-
     steps:
       - name: 'Checkout code'
         uses: actions/checkout@v4
@@ -46,52 +36,38 @@ jobs:
 
       - name: 'Build docker image'
         uses: docker/build-push-action@v5
-        # env:
-        #   DJANGO_SECRET_KEY: ${{ secrets.DJANGO_SECRET_KEY }}
-        #   GCP_SA_KEY: ${{ secrets.GCP_SA_KEY }}
-        #   GCP_PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
-        #   SERVICE_NAME: ${{ secrets.GCP_SERVICE_NAME }}
-        #   GCP_REGION: ${{ secrets.GCP_REGION }}
-        #   MYSQL_INSTANCE: ${{ secrets.MYSQL_INSTANCE }}
-        #   MYSQL_DATABASE: ${{ secrets.MYSQL_DB }}
-        #   MYSQL_USER: ${{ secrets.MYSQL_USER }}
-        #   MYSQL_PASSWORD: ${{ secrets.MYSQL_PASS }}
-        #   GCP_BUCKET_NAME: ${{ vars.GCP_BUCKET_NAME }}
         with:
           tags: ${{ vars.ARTIFACT_REGISTRY_URL }}/${{ vars.GCP_PROJECT_ID }}/nod-backend/${{ vars.GCP_SERVICE_NAME }}:${{ github.sha }}
           push: true
-          context: ${{ inputs.dockerContext }}
-          file: ${{ inputs.dockerFilePath }}
-          build-args: |
-            DJANGO_ENV=production
-            DJANGO_SECRET_KEY: ${{ secrets.DJANGO_SECRET_KEY }}
-            GCP_SA_KEY: ${{ secrets.GCP_SA_KEY }}
-            GCP_PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
-            SERVICE_NAME: ${{ secrets.GCP_SERVICE_NAME }}
-            GCP_REGION: ${{ secrets.GCP_REGION }}
-            MYSQL_INSTANCE: ${{ secrets.MYSQL_INSTANCE }}
-            MYSQL_DATABASE: ${{ secrets.MYSQL_DB }}
-            MYSQL_USER: ${{ secrets.MYSQL_USER }}
-            MYSQL_PASSWORD: ${{ secrets.MYSQL_PASS }}
-            GCP_BUCKET_NAME: ${{ vars.GCP_BUCKET_NAME }}
+          context: .
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
 
       - name: 'Deploy to Cloud Run'
+        id: deploy
         uses: 'google-github-actions/deploy-cloudrun@v2'
         with:
           service: ${{ vars.GCP_SERVICE_NAME }}
           region: ${{ vars.GCP_REGION }}
           image: '${{ vars.ARTIFACT_REGISTRY_URL }}/${{ vars.GCP_PROJECT_ID }}/nod-backend/${{ vars.GCP_SERVICE_NAME }}:${{ github.sha }}'
           flags: '--port=8000 --allow-unauthenticated'
-          env_vars: |
-            MYSQL_INSTANCE=${{ env.MYSQL_INSTANCE }}
-            MYSQL_DATABASE=${{ env.MYSQL_DATABASE }}
-            MYSQL_USER=${{ env.MYSQL_USER }}
-            MYSQL_PASSWORD=${{ env.MYSQL_PASSWORD }}
+          env_vars: |-
+            DJANGO_ENV=production
+            GCP_BUCKET_NAME:${{ vars.GCP_BUCKET_NAME }}
+          secrets: |-
+            DJANGO_SECRET_KEY=DJANGO_SECRET_KEY:latest
+            DJANGO_SUPERUSER_USERNAME=DJANGO_SUPERUSER_USERNAME:latest
+            DJANGO_SUPERUSER_PASSWORD=DJANGO_SUPERUSER_PASSWORD:latest
+            DJANGO_SUPERUSER_EMAIL=DJANGO_SUPERUSER_EMAIL:latest
+            MYSQL_INSTANCE=MYSQL_INSTANCE:latest
+            MYSQL_DATABASE=MYSQL_DATABASE:latest
+            MYSQL_USER=MYSQL_USER:latest
+            MYSQL_PASSWORD=MYSQL_PASSWORD:latest
 
       - name: 'Run database migrations'
         run: |
-          gcloud run services describe ${{ vars.GCP_SERVICE_NAME }} --region ${{ vars.GCP_REGION }} --format 'value(status.url)' | xargs -I {} curl -X POST "{}/migrate"
+          curl -X POST "${{ steps.deploy.outputs.url }}/migrate"
 
       - name: 'Collect static files'
         run: |
-          gcloud run services describe ${{ vars.GCP_SERVICE_NAME }} --region ${{ vars.GCP_REGION }} --format 'value(status.url)' | xargs -I {} curl -X POST "{}/collectstatic"
+          curl -X POST "${{ steps.deploy.outputs.url }}/collectstatic"
