@@ -31,7 +31,8 @@ EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
 ALLOWED_HOSTS = [
     "localhost",
     "127.0.0.1:8000",
-    "127.0.0.1"
+    "127.0.0.1",
+    "nod-django-app-7z6iwfp5aa-uw.a.run.app"
 ]
 # CORS_ALLOW_ALL_ORIGINS = True
 
