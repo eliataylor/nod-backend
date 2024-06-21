@@ -26,7 +26,7 @@ SECURE_HSTS_PRELOAD = True  # Allow the site to be included in browsers' HSTS pr
 
 
 GS_CREDENTIALS = service_account.Credentials.from_service_account_file(
-    os.path.join(BASE_DIR, os.environ['GCP_SA_KEY'])
+    os.path.join(BASE_DIR, os.environ['GCP_SA_KEY_PATH'])
 )
 DEFAULT_FILE_STORAGE = 'storages.backends.gcloud.GoogleCloudStorage'
 GS_DEFAULT_ACL = 'publicRead'
