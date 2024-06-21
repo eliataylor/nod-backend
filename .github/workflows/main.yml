@@ -52,7 +52,7 @@ jobs:
           file: ${{ inputs.dockerFilePath }}
           build-args: |
             "DJANGO_ENV=production"
-            "DJANGO_SECRET_KEY=${{ secrets.DJANGO_SECRET_KEY }}"
+            "DJANGO_SECRET_KEY=uqI9nmzRlaqoYMApQhxpgbLJfGFwPiWmMOHxKbqTYydHqeRXMp"
             "GCP_SERVICE_NAME=nod-django-app"
             "GCP_REGION=us-west1"
             "GCP_BUCKET_NAME=nod_django_prod"                        
