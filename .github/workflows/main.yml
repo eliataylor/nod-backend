@@ -11,6 +11,7 @@ jobs:
       contents: 'read'
       id-token: 'write'
     runs-on: ubuntu-latest
+    environment: 'nod_django_prod'
 
     env:
       # GCP_PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
@@ -20,7 +21,7 @@ jobs:
       MYSQL_DATABASE: ${{ secrets.MYSQL_DB }}
       MYSQL_USER: ${{ secrets.MYSQL_USER }}
       MYSQL_PASSWORD: ${{ secrets.MYSQL_PASS }}
-      GCP_BUCKET_NAME: ${{ secrets.GCP_BUCKET_NAME }}
+      GCP_BUCKET_NAME: ${{ vars.GCP_BUCKET_NAME }}
 
     steps:
       - name: 'Checkout code'
