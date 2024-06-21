@@ -11,6 +11,7 @@ CORS_ALLOWED_ORIGINS = [
     "https://stage.nourishmentondemand.com",
     "https://dev.nourishmentondemand.com",
     "https://nod_django_prod.nourishmentondemand.com",
+    "https://nod-django-app-7z6iwfp5aa-uw.a.run.app",
     "http://localhost:3000",
     "http://127.0.0.1:3000",
     "http://127.0.0.1:8000"
