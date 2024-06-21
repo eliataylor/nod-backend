@@ -10,14 +10,14 @@ jobs:
     runs-on: ubuntu-latest
 
     env:
-      GS_PROJECT_ID: ${{ secrets.GS_PROJECT_ID }}
-      SERVICE_NAME: ${{ secrets.GS_SERVICE_NAME }}
-      GS_REGION: ${{ secrets.GS_REGION }}
+      GCP_PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
+      SERVICE_NAME: ${{ secrets.GCP_SERVICE_NAME }}
+      GCP_REGION: ${{ secrets.GCP_REGION }}
       MYSQL_INSTANCE: ${{ secrets.MYSQL_INSTANCE }}
       MYSQL_DATABASE: ${{ secrets.MYSQL_DB }}
       MYSQL_USER: ${{ secrets.MYSQL_USER }}
       MYSQL_PASSWORD: ${{ secrets.MYSQL_PASS }}
-      GS_BUCKET_NAME: ${{ secrets.GS_BUCKET_NAME }}
+      GCP_BUCKET_NAME: ${{ secrets.GCP_BUCKET_NAME }}
 
     steps:
       - name: Checkout code
@@ -27,7 +27,7 @@ jobs:
         uses: google-github-actions/setup-gcloud@v1
         with:
           version: 'latest'f
-          project_id: ${{ env.GS_PROJECT_ID }}
+          project_id: ${{ env.GCP_PROJECT_ID }}
           service_account_key: ${{ secrets.GCP_SA_KEY }}
 
       - name: Authenticate Docker to Google Cloud
@@ -39,26 +39,26 @@ jobs:
 
       - name: Build and push Docker image
         run: |
-          docker build -t gcr.io/${{ env.GS_PROJECT_ID }}/${{ env.SERVICE_NAME }} .
-          docker push gcr.io/${{ env.GS_PROJECT_ID }}/${{ env.SERVICE_NAME }}
+          docker build -t gcr.io/${{ env.GCP_PROJECT_ID }}/${{ env.SERVICE_NAME }} .
+          docker push gcr.io/${{ env.GCP_PROJECT_ID }}/${{ env.SERVICE_NAME }}
 
       - name: Deploy to Cloud Run
         run: |
           gcloud run deploy ${{ env.SERVICE_NAME }} \
-            --image gcr.io/${{ env.GS_PROJECT_ID }}/${{ env.SERVICE_NAME }} \
-            --region ${{ env.GS_REGION }} \
+            --image gcr.io/${{ env.GCP_PROJECT_ID }}/${{ env.SERVICE_NAME }} \
+            --region ${{ env.GCP_REGION }} \
             --platform managed \
             --set-env-vars MYSQL_INSTANCE=${{ env.MYSQL_INSTANCE }} \
             --set-env-vars MYSQL_DATABASE=${{ env.MYSQL_DATABASE }} \
             --set-env-vars MYSQL_USER=${{ env.MYSQL_USER }} \
             --set-env-vars MYSQL_PASSWORD=${{ env.MYSQL_PASSWORD }} \
-            --set-env-vars GS_BUCKET_NAME=${{ env.GS_BUCKET_NAME }} \
+            --set-env-vars GCP_BUCKET_NAME=${{ env.GCP_BUCKET_NAME }} \
             --allow-unauthenticated
 
       - name: Run database migrations
         run: |
-          gcloud run services describe ${{ env.SERVICE_NAME }} --region ${{ env.GS_REGION }} --format 'value(status.url)' | xargs -I {} curl -X POST "{}/migrate"
+          gcloud run services describe ${{ env.SERVICE_NAME }} --region ${{ env.GCP_REGION }} --format 'value(status.url)' | xargs -I {} curl -X POST "{}/migrate"
 
       - name: Collect static files
         run: |
-          gcloud run services describe ${{ env.SERVICE_NAME }} --region ${{ env.GS_REGION }} --format 'value(status.url)' | xargs -I {} curl -X POST "{}/collectstatic"
+          gcloud run services describe ${{ env.SERVICE_NAME }} --region ${{ env.GCP_REGION }} --format 'value(status.url)' | xargs -I {} curl -X POST "{}/collectstatic"
