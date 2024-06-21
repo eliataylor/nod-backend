@@ -13,9 +13,9 @@ jobs:
     runs-on: ubuntu-latest
 
     env:
-      GCP_PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
-      SERVICE_NAME: ${{ secrets.GCP_SERVICE_NAME }}
-      GCP_REGION: ${{ secrets.GCP_REGION }}
+      # GCP_PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
+      # SERVICE_NAME: ${{ secrets.GCP_SERVICE_NAME }}
+      # GCP_REGION: ${{ secrets.GCP_REGION }}
       MYSQL_INSTANCE: ${{ secrets.MYSQL_INSTANCE }}
       MYSQL_DATABASE: ${{ secrets.MYSQL_DB }}
       MYSQL_USER: ${{ secrets.MYSQL_USER }}
@@ -45,7 +45,7 @@ jobs:
       - name: 'Build docker image'
         uses: docker/build-push-action@v5
         with:
-          tags: ${{ vars.ARTIFACT_REGISTRY_URL }}/${{ vars.GCP_PROJECT_ID }}/nod_backend/${{ env.SERVICE_NAME }}:${{ github.sha }}
+          tags: ${{ vars.ARTIFACT_REGISTRY_URL }}/${{ vars.GCP_PROJECT_ID }}/nod_backend/${{ vars.GCP_SERVICE_NAME }}:${{ github.sha }}
           push: true
           context: ${{ inputs.dockerContext }}
           file: ${{ inputs.dockerFilePath }}
@@ -53,9 +53,9 @@ jobs:
       - name: 'Deploy to Cloud Run'
         uses: 'google-github-actions/deploy-cloudrun@v2'
         with:
-          service: ${{ env.SERVICE_NAME }}
+          service: ${{ vars.GCP_SERVICE_NAME }}
           region: ${{ env.REGION }}
-          image: '${{ vars.ARTIFACT_REGISTRY_URL }}/${{ vars.GCP_PROJECT_ID }}/nod_backend/${{ env.SERVICE_NAME }}:${{ github.sha }}'
+          image: '${{ vars.ARTIFACT_REGISTRY_URL }}/${{ vars.GCP_PROJECT_ID }}/nod_backend/${{ vars.GCP_SERVICE_NAME }}:${{ github.sha }}'
           flags: '--platform managed --allow-unauthenticated'
           env_vars: |
             MYSQL_INSTANCE=${{ env.MYSQL_INSTANCE }}
@@ -65,8 +65,8 @@ jobs:
 
       - name: 'Run database migrations'
         run: |
-          gcloud run services describe ${{ env.SERVICE_NAME }} --region ${{ env.GCP_REGION }} --format 'value(status.url)' | xargs -I {} curl -X POST "{}/migrate"
+          gcloud run services describe ${{ vars.GCP_SERVICE_NAME }} --region ${{ vars.GCP_REGION }} --format 'value(status.url)' | xargs -I {} curl -X POST "{}/migrate"
 
       - name: 'Collect static files'
         run: |
-          gcloud run services describe ${{ env.SERVICE_NAME }} --region ${{ env.GCP_REGION }} --format 'value(status.url)' | xargs -I {} curl -X POST "{}/collectstatic"
+          gcloud run services describe ${{ vars.GCP_SERVICE_NAME }} --region ${{ vars.GCP_REGION }} --format 'value(status.url)' | xargs -I {} curl -X POST "{}/collectstatic"
