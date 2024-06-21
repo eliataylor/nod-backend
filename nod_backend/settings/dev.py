@@ -1,5 +1,6 @@
 from .base import *
 from dotenv import load_dotenv
+from google.oauth2 import service_account
 
 dotenv_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '../..')) + '/.env.dev'
 if os.path.exists(dotenv_path):

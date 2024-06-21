@@ -1,6 +1,5 @@
 from .base import *
 import os
-from google.oauth2 import service_account
 
 
 DEBUG = False
