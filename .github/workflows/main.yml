@@ -10,18 +10,19 @@ jobs:
     permissions:
       contents: 'read'
       id-token: 'write'
+
     runs-on: ubuntu-latest
     environment: 'nod_django_prod'
 
-    env:
+    # env:
       # GCP_PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
       # SERVICE_NAME: ${{ secrets.GCP_SERVICE_NAME }}
       # GCP_REGION: ${{ secrets.GCP_REGION }}
-      MYSQL_INSTANCE: ${{ secrets.MYSQL_INSTANCE }}
-      MYSQL_DATABASE: ${{ secrets.MYSQL_DB }}
-      MYSQL_USER: ${{ secrets.MYSQL_USER }}
-      MYSQL_PASSWORD: ${{ secrets.MYSQL_PASS }}
-      GCP_BUCKET_NAME: ${{ vars.GCP_BUCKET_NAME }}
+      # MYSQL_INSTANCE: ${{ secrets.MYSQL_INSTANCE }}
+      # MYSQL_DATABASE: ${{ secrets.MYSQL_DB }}
+      # MYSQL_USER: ${{ secrets.MYSQL_USER }}
+      # MYSQL_PASSWORD: ${{ secrets.MYSQL_PASS }}
+      # GCP_BUCKET_NAME: ${{ vars.GCP_BUCKET_NAME }}
 
     steps:
       - name: 'Checkout code'
@@ -78,9 +79,9 @@ jobs:
         uses: 'google-github-actions/deploy-cloudrun@v2'
         with:
           service: ${{ vars.GCP_SERVICE_NAME }}
-          region: ${{ env.REGION }}
+          region: ${{ vars.GCP_REGION }}
           image: '${{ vars.ARTIFACT_REGISTRY_URL }}/${{ vars.GCP_PROJECT_ID }}/nod-backend/${{ vars.GCP_SERVICE_NAME }}:${{ github.sha }}'
-          flags: '--platform managed --allow-unauthenticated'
+          flags: '--port=8000 --allow-unauthenticated'
           env_vars: |
             MYSQL_INSTANCE=${{ env.MYSQL_INSTANCE }}
             MYSQL_DATABASE=${{ env.MYSQL_DATABASE }}
