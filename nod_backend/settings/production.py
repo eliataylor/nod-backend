@@ -13,20 +13,20 @@ ALLOWED_HOSTS = [
     "https://www.nourishmentondemand.com"
 ]
 
-CORS_ALLOWED_ORIGINS = [
-    "https://nourishmentondemand.com",
-    "https://www.nourishmentondemand.com",
-    "https://*.nourishmentondemand.com",
-    "https://stage.nourishmentondemand.com",
-    "https://dev.nourishmentondemand.com",
-    "https://nod_django_prod.nourishmentondemand.com",
-    "https://nod-django-app-*.a.run.app",
-    "http://localhost:3000",
-    "http://127.0.0.1:3000",
-    "http://127.0.0.1:8000"
-]
+# CORS_ALLOWED_ORIGINS = [
+#     "https://nourishmentondemand.com",
+#     "https://www.nourishmentondemand.com",
+#     "https://*.nourishmentondemand.com",
+#     "https://stage.nourishmentondemand.com",
+#     "https://dev.nourishmentondemand.com",
+#     "https://nod_django_prod.nourishmentondemand.com",
+#     "https://nod-django-app-*.a.run.app",
+#     "http://localhost:3000",
+#     "http://127.0.0.1:3000",
+#     "http://127.0.0.1:8000"
+# ]
 
-CSRF_TRUSTED_ORIGINS = CORS_ALLOWED_ORIGINS
+# CSRF_TRUSTED_ORIGINS = CORS_ALLOWED_ORIGINS
 
 # Set HSTS headers
 SECURE_HSTS_SECONDS = 31536000  # 1 year
