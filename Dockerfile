@@ -1,67 +1,62 @@
 # syntax=docker/dockerfile:1
 
-# Use the official Python image from the Docker Hub
-FROM python:3.9.18-slim
+# Stage 0: Set base image
+FROM python:3.9.18-slim AS base
 
-# Install mysqlclient dependencies
-RUN apt-get install -y libmysqlclient-dev
+# Install build dependencies
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends \
+    default-libmysqlclient-dev
 
-# Define build-time arguments
-# ARG DJANGO_ENV
-# ARG DJANGO_SECRET_KEY
-# ARG GCP_REGION
-# ARG GCP_SA_KEY
-# ARG GCP_PROJECT_ID
-# ARG GCP_BUCKET_NAME
+# Stage 1: Build stage
+FROM base AS build
 
-# Set environment variables
-# ENV DJANGO_ENV=production
-# ENV DJANGO_SECRET_KEY=$DJANGO_SECRET_KEY
-# ENV GCP_REGION=$GCP_REGION
-# ENV GCP_SA_KEY=test
-# ENV GCP_PROJECT_ID=$GCP_PROJECT_ID
-# ENV GCP_BUCKET_NAME=test
-
-# Set environment variable
-ENV DJANGO_ENV=production
-
-# Set environment variables for superuser creation
-ENV DJANGO_SUPERUSER_USERNAME=admin
-ENV DJANGO_SUPERUSER_PASSWORD=admin
-ENV DJANGO_SUPERUSER_EMAIL=admin@example.com
-
-# Set environment variables
-ENV PYTHONDONTWRITEBYTECODE=1
-ENV PYTHONUNBUFFERED=1
+# Install build dependencies
+RUN apt-get install -y --no-install-recommends \
+    build-essential \
+    pkg-config && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
 
 # Create and set the working directory
 WORKDIR /app
 
-# Install dependencies
+# Install Python dependencies
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copy the entrypoint script
-COPY entrypoint.sh /entrypoint.sh
-RUN chmod +x /entrypoint.sh
+# Stage 2: Runtime stage
+FROM base AS runner
 
-# Copy the application code to the working directory
+# Clean unnecessary files
+RUN apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
+
+# Set environment variables
+ENV DJANGO_ENV=production \
+    DJANGO_SUPERUSER_USERNAME=admin \
+    DJANGO_SUPERUSER_PASSWORD=admin \
+    DJANGO_SUPERUSER_EMAIL=admin@example.com \
+    PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1 \
+    PORT=8080
+
+# Create and set the working directory
+WORKDIR /app
+
+# Copy the Python dependencies from the build stage
+COPY --from=build /usr/local/lib/python3.9/site-packages /usr/local/lib/python3.9/site-packages
+COPY --from=build /usr/local/bin /usr/local/bin
+
+# Copy the entrypoint script and application code to the working directory
+COPY entrypoint.sh /entrypoint.sh
 COPY . .
 
-# Run database migrations and collect static files
-# RUN python manage.py migrate \
-#     && python manage.py collectstatic --noinput
-# RUN python manage.py makemigrations \
-#     python manage.py migrate && \
-#     python manage.py migrate --run-syncdb
+# Ensure the entrypoint script is executable
+RUN chmod +x /entrypoint.sh
 
 # Expose the port the app runs on
-ENV PORT=8080
 EXPOSE 8000
-
-# Command to run the application
-# CMD ["gunicorn", "--bind", "0.0.0.0:8000", "--workers", "1", "--threads", "8", "nod_backend.wsgi:application"]
-# CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]
 
 # Run the entrypoint script
 ENTRYPOINT ["/entrypoint.sh"]
