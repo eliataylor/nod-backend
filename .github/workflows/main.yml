@@ -50,10 +50,10 @@ jobs:
           service: ${{ vars.GCP_SERVICE_NAME }}
           region: ${{ vars.GCP_REGION }}
           image: '${{ vars.ARTIFACT_REGISTRY_URL }}/${{ vars.GCP_PROJECT_ID }}/nod-backend/${{ vars.GCP_SERVICE_NAME }}:${{ github.sha }}'
-          flags: '--port=8000 --allow-unauthenticated'
+          flags: '--port=8000 --allow-unauthenticated --min-instances=1'
           env_vars: |-
             DJANGO_ENV=production
-            GCP_BUCKET_NAME:${{ vars.GCP_BUCKET_NAME }}
+            GCP_BUCKET_NAME=${{ vars.GCP_BUCKET_NAME }}
           secrets: |-
             DJANGO_SECRET_KEY=DJANGO_SECRET_KEY:latest
             DJANGO_SUPERUSER_USERNAME=DJANGO_SUPERUSER_USERNAME:latest
