@@ -63,6 +63,7 @@ jobs:
             MYSQL_DATABASE=MYSQL_DATABASE:latest
             MYSQL_USER=MYSQL_USER:latest
             MYSQL_PASSWORD=MYSQL_PASSWORD:latest
+            GCP_SA_KEY=GCP_SA_KEY:latest
 
       - name: 'Run database migrations'
         run: |

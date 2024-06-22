@@ -1,15 +1,14 @@
 import os
-from .base import *
 
-# Set the environment variable
-ENVIRONMENT = os.getenv('DJANGO_ENV', 'production')
+# Determine environment
+DJANGO_ENV = os.getenv('DJANGO_ENV', 'dev')
 
-# Load the appropriate settings based on the environment
-if ENVIRONMENT == 'production':
+# Load appropriate settings
+if DJANGO_ENV == 'dev':
+    print(f"DJANGO_ENV: {os.getenv('DJANGO_ENV')} is SET")
+    from .dev import *
+elif DJANGO_ENV == 'production':
+    print(f"DJANGO_ENV: {os.getenv('DJANGO_ENV')} is SET")
     from .production import *
 else:
-    from .dev import *
-
-# Debugging logs for verifying the environment setting
-print(f"DJANGO_ENV: {os.getenv('DJANGO_ENV', 'Not Set')}")
-print(f"ENVIRONMENT: {ENVIRONMENT}")
+    raise ImportError("Invalid DJANGO_ENV setting")
