@@ -53,6 +53,7 @@ jobs:
           flags: '--port=8000 --allow-unauthenticated --min-instances=1'
           env_vars: |-
             DJANGO_ENV=production
+            GCP_PROJECT_ID=${{ vars.GCP_PROJECT_ID }}
             GCP_BUCKET_NAME=${{ vars.GCP_BUCKET_NAME }}
           secrets: |-
             DJANGO_SECRET_KEY=DJANGO_SECRET_KEY:latest
