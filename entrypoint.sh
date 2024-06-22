@@ -8,7 +8,7 @@ echo "Running database migrations"
 python manage.py makemigrations
 python manage.py migrate
 python manage.py migrate --run-syncdb
-python manage.py collectstatic
+python manage.py collectstatic --noinput
 
 # Create a superuser if it does not exist
 if [ "$DJANGO_SUPERUSER_USERNAME" ] && [ "$DJANGO_SUPERUSER_PASSWORD" ] && [ "$DJANGO_SUPERUSER_EMAIL" ]; then
