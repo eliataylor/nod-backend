@@ -34,8 +34,10 @@ SECURE_HSTS_INCLUDE_SUBDOMAINS = True  # Apply HSTS to all subdomains
 SECURE_HSTS_PRELOAD = True  # Allow the site to be included in browsers' HSTS preload list
 
 # Define static storage via django-storages[google]
+# Using default Cloud Run service account
+# GS_CREDENTIALS = os.getenv('GCP_SA_KEY')
+GS_PROJECT_ID = os.getenv('GCP_PROJECT_ID')
 GS_BUCKET_NAME = os.getenv('GCP_BUCKET_NAME')
-GS_CREDENTIALS = os.getenv('GCP_SA_KEY')
 STATIC_URL = "/static/"
 DEFAULT_FILE_STORAGE = "storages.backends.gcloud.GoogleCloudStorage"
 STATICFILES_STORAGE = "storages.backends.gcloud.GoogleCloudStorage"
