@@ -3,16 +3,31 @@ import os
 
 DEBUG = False
 
-STATIC_URL = '/static/'
-STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 SECRET_KEY = os.getenv("DJANGO_SECRET_KEY")
 SECURE_SSL_REDIRECT = True
 SESSION_COOKIE_SECURE = True
 CSRF_COOKIE_SECURE = True
 
 ALLOWED_HOSTS = [
-    "*.a.run.app"
+    "*.a.run.app",
+    "https://nourishmentondemand.com",
+    "https://www.nourishmentondemand.com"
 ]
+
+CORS_ALLOWED_ORIGINS = [
+    "https://nourishmentondemand.com",
+    "https://www.nourishmentondemand.com",
+    "https://*.nourishmentondemand.com",
+    "https://stage.nourishmentondemand.com",
+    "https://dev.nourishmentondemand.com",
+    "https://nod_django_prod.nourishmentondemand.com",
+    "https://nod-django-app-7z6iwfp5aa-uw.a.run.app",
+    "http://localhost:3000",
+    "http://127.0.0.1:3000",
+    "http://127.0.0.1:8000"
+]
+
+CSRF_TRUSTED_ORIGINS = CORS_ALLOWED_ORIGINS
 
 # Set HSTS headers
 SECURE_HSTS_SECONDS = 31536000  # 1 year
@@ -38,19 +53,6 @@ DATABASES = {
         "PORT": "3306",
     }
 }
-
-# DATABASES = {
-#     "default": {
-#         "ENGINE": "django.db.backends.sqlite3",
-#         "NAME": os.path.join(BASE_DIR, "db.sqlite3"),
-#     }
-# }
-
-
-# Superuser creation settings
-SUPERUSER_USERNAME = os.getenv('DJANGO_SUPERUSER_USERNAME')
-SUPERUSER_PASSWORD = os.getenv('DJANGO_SUPERUSER_PASSWORD')
-SUPERUSER_EMAIL = os.getenv('DJANGO_SUPERUSER_EMAIL')
 
 try:
     from .local import *
