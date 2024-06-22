@@ -40,8 +40,8 @@ jobs:
           tags: ${{ vars.ARTIFACT_REGISTRY_URL }}/${{ vars.GCP_PROJECT_ID }}/nod-backend/${{ vars.GCP_SERVICE_NAME }}:${{ github.sha }}
           push: true
           context: .
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
+          # cache-from: type=gha
+          # cache-to: type=gha,mode=max
 
       - name: 'Deploy to Cloud Run'
         id: deploy
