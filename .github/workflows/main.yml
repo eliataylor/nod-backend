@@ -66,8 +66,8 @@ jobs:
 
       - name: 'Run database migrations'
         run: |
-          curl -X POST "${{ steps.deploy.outputs.url }}/migrate"
+          curl -X POST "${{ steps.deploy.outputs.url }}/migrate/"
 
       - name: 'Collect static files'
         run: |
-          curl -X POST "${{ steps.deploy.outputs.url }}/collectstatic"
+          curl -X POST "${{ steps.deploy.outputs.url }}/collectstatic/"

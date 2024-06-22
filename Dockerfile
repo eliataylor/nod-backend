@@ -3,6 +3,9 @@
 # Use the official Python image from the Docker Hub
 FROM python:3.9.18-slim
 
+# Install mysqlclient dependencies
+RUN apt-get install -y libmysqlclient-dev
+
 # Define build-time arguments
 # ARG DJANGO_ENV
 # ARG DJANGO_SECRET_KEY
