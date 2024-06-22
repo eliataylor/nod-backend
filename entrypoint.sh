@@ -6,7 +6,6 @@ set -e
 # Run database migrations
 echo "Running database migrations"
 python manage.py makemigrations
-python manage.py makemigrations nod_backend
 python manage.py migrate
 python manage.py migrate --run-syncdb
 python manage.py collectstatic
