@@ -12,3 +12,4 @@ protobuf==5.27.1
 python-dotenv==1.0.1
 google-cloud-storage
 gunicorn==22.0.0
+mysqlclient==2.2.4
