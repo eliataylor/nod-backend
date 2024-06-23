@@ -74,8 +74,7 @@ jobs:
 
       - name: 'Update Allowed hosts and CSRF Origins'
         run: |
-          gcloud run deploy ${{ vars.GCP_SERVICE_NAME }} \
-            --image ${{ vars.ARTIFACT_REGISTRY_URL }}/${{ vars.GCP_PROJECT_ID }}/nod-backend/${{ vars.GCP_SERVICE_NAME }}:${{ github.sha }} \
+          gcloud run services update ${{ vars.GCP_SERVICE_NAME }} \
             --update-env-vars DJANGO_ALLOWED_HOSTS="${{ steps.fqdn.outputs.domain }}" DJANGO_CSRF_TRUSTED_ORIGINS="${{ steps.deploy.outputs.url }}"
 
       - name: 'Run database migrations'
