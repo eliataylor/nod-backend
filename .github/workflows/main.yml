@@ -70,7 +70,7 @@ jobs:
         id: fqdn
         run: |
           domain=$(echo ${{ steps.deploy.outputs.url }} | awk -F[/:] '{print $4}')
-          echo "::set-output name=domain::$domain"
+          echo "domain=$domain" >> $GITHUB_OUTPUT
 
       - name: 'Update Allowed hosts and CSRF Origins'
         run: |
