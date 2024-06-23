@@ -1,13 +1,5 @@
 from .base import *
 
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
-
-CORS_ALLOWED_ORIGINS = [
-    "http://localhost:3000",
-    "http://127.0.0.1:3000",
-]
-
 INSTALLED_APPS += [
     'django_extensions',  # Example of a dev-only app
 ]
@@ -16,12 +8,13 @@ EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
 
 ALLOWED_HOSTS = [
     "localhost",
-    "127.0.0.1:8000",
-    "127.0.0.1",
-    "*.a.run.app",
-    "nod-django-app-7z6iwfp5aa-uw.a.run.app",
-    "https://nourishmentondemand.com",
-    "https://www.nourishmentondemand.com",
+    "127.0.0.1"
+]
+
+SESSION_COOKIE_SECURE = True
+CSRF_COOKIE_SECURE = True
+CSRF_TRUSTED_ORIGINS = [
+    "https://nourishmentondemand.com"
 ]
 
 # Default storage settings, with the staticfiles storage updated.
@@ -39,24 +32,9 @@ STORAGES = {
     },
 }
 
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.sqlite3',
-#         'NAME': BASE_DIR / 'db.sqlite3',
-#     }
-# }
+# try:
+#     from .local import *
+# except ImportError:
+#     pass
 
-DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.mysql",
-        "NAME": os.getenv("MYSQL_DATABASE"),
-        "USER": os.getenv("MYSQL_USER"),
-        "PASSWORD": os.getenv("MYSQL_PASSWORD"),
-        "HOST": os.getenv("MYSQL_INSTANCE")
-    }
-}
-
-try:
-    from .local import *
-except ImportError:
-    pass
+print(f"Development setting (development.py) is Loaded")
