@@ -17,6 +17,12 @@ ALLOWED_HOSTS = [
     "*.a.run.app"
 ]
 
+SESSION_COOKIE_SECURE = True
+CSRF_COOKIE_SECURE = True
+CSRF_TRUSTED_ORIGINS = [
+    "https://nod-django-app-7z6iwfp5aa-uw.a.run.app"
+]
+
 # Define static storage via django-storages[google]
 # Using default Cloud Run service account
 # GS_CREDENTIALS = os.getenv('GCP_SA_KEY')
