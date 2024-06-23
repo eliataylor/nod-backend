@@ -3,7 +3,7 @@ from .base import *
 DEBUG = True
 
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
-SECRET_KEY = os.environ["DJANGO_SECRET_KEY"]
+SECRET_KEY = os.getenv("DJANGO_SECRET_KEY")
 SECURE_SSL_REDIRECT = True
 SESSION_COOKIE_SECURE = True
 CSRF_COOKIE_SECURE = True
@@ -13,15 +13,9 @@ SECURE_HSTS_SECONDS = 31536000  # 1 year
 SECURE_HSTS_INCLUDE_SUBDOMAINS = True  # Apply HSTS to all subdomains
 SECURE_HSTS_PRELOAD = True  # Allow the site to be included in browsers' HSTS preload list
 
-ALLOWED_HOSTS = [
-    "*.a.run.app"
-]
-
 SESSION_COOKIE_SECURE = True
 CSRF_COOKIE_SECURE = True
-CSRF_TRUSTED_ORIGINS = [
-    "https://nod-django-app-7z6iwfp5aa-uw.a.run.app"
-]
+CSRF_TRUSTED_ORIGINS = os.getenv('DJANGO_CSRF_TRUSTED_ORIGINS', '').split(',')
 
 # Define static storage via django-storages[google]
 # Using default Cloud Run service account
