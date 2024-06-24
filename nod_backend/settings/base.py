@@ -29,6 +29,24 @@ INSTALLED_APPS = [
     'corsheaders',
     'address',
     'djmoney',
+
+    'allauth',
+    'allauth.account',
+    'allauth.mfa',
+    'allauth.socialaccount',
+    'allauth.socialaccount.providers.apple',
+    'allauth.socialaccount.providers.auth0',
+    'allauth.socialaccount.providers.facebook',
+    'allauth.socialaccount.providers.github',
+    'allauth.socialaccount.providers.google',
+
+    "django.contrib.admin",
+    "django.contrib.auth",
+    "django.contrib.contenttypes",
+    "django.contrib.sessions",
+    "django.contrib.messages",
+    "django.contrib.staticfiles",
+    "nod_app"
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -36,6 +54,12 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'nod_app'
+]
+
+
+AUTHENTICATION_BACKENDS = [
+    'django.contrib.auth.backends.ModelBackend',
+    'allauth.account.auth_backends.AuthenticationBackend',
 ]
 
 MIDDLEWARE = [
@@ -47,8 +71,26 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'django.middleware.security.SecurityMiddleware'
+
+    "allauth.account.middleware.AccountMiddleware",
 ]
+
+MFA_FORMS = {
+    'authenticate': 'allauth.mfa.forms.AuthenticateForm',
+    'reauthenticate': 'allauth.mfa.forms.AuthenticateForm',
+    'activate_totp': 'allauth.mfa.forms.ActivateTOTPForm',
+    'deactivate_totp': 'allauth.mfa.forms.DeactivateTOTPForm',
+}
+
+SOCIALACCOUNT_PROVIDERS = {
+    'google': {
+        'APP': {
+            'client_id': '',
+            'secret': '',
+            'key': ''
+        }
+    }
+}
 
 REST_FRAMEWORK = {
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
@@ -151,3 +193,17 @@ MEDIA_URL = '/media/'
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
+#### needs to be tracked in Object actions:
+DEFAULT_AUTO_FIELD='django.db.models.AutoField'
+GOOGLE_API_KEY = 'CHANGEME'
+
+ACCOUNT_EMAIL_VERIFICATION = "mandatory"
+ACCOUNT_EMAIL_REQUIRED = True
+
+# Email Settings
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_USE_TLS = True
+EMAIL_HOST = os.environ.get('EMAIL_HOST')
+EMAIL_PORT = os.environ.get('EMAIL_PORT')
+EMAIL_HOST_USER = os.environ.get('EMAIL_HOST_USER')
+EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD')
