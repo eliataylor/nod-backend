@@ -49,7 +49,6 @@ local==1.0.0
 pillow==10.3.0
 pillow_heif==0.16.0
 proto-plus==1.24.0
-protobuf==4.25.3
 psycopg2-binary==2.9.9
 py-moneyed==3.0
 pyasn1==0.6.0
