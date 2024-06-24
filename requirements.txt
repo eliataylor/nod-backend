@@ -21,7 +21,6 @@ django-permissionedforms==0.1
 django-storages==1.14.2
 django-taggit==5.0.1
 django-treebeard==4.7.1
-django-storages[google]==1.14.3
 djangorestframework==3.15.1
 draftjs-exporter==5.0.0
 et-xmlfile==1.1.0
@@ -72,7 +71,6 @@ whitenoise==6.6.0
 Willow==1.8.0
 
 pipreqs==0.5.0
-protobuf==5.27.1
+protobuf==4.25.3
 python-dotenv==1.0.1
-gunicorn==22.0.0
-mysqlclient==2.2.4
+# mysqlclient==2.2.4
