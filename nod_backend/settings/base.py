@@ -26,18 +26,17 @@ CSRF_TRUSTED_ORIGINS = os.getenv('DJANGO_CSRF_TRUSTED_ORIGINS', 'http://localhos
 
 INSTALLED_APPS = [
     'rest_framework',
+    'rest_framework.authtoken',
     'corsheaders',
     'address',
     'djmoney',
+    'dj_rest_auth',
+    'dj_rest_auth.registration',
+    'drf_yasg',
 
     'allauth',
     'allauth.account',
-    'allauth.mfa',
     'allauth.socialaccount',
-    'allauth.socialaccount.providers.apple',
-    'allauth.socialaccount.providers.auth0',
-    'allauth.socialaccount.providers.facebook',
-    'allauth.socialaccount.providers.github',
     'allauth.socialaccount.providers.google',
 
     "django.contrib.admin",
@@ -47,7 +46,8 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     'django.contrib.sessions',
 
-    'nod_app'
+    'nod_app',
+    'users'
 ]
 
 
@@ -195,8 +195,25 @@ DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
 DEFAULT_AUTO_FIELD='django.db.models.AutoField'
 GOOGLE_API_KEY = 'CHANGEME'
 
+GOOGLE_CALLBACK_URL = os.environ.get("GOOGLE_CALLBACK_URL")
+
 ACCOUNT_EMAIL_VERIFICATION = "mandatory"
 ACCOUNT_EMAIL_REQUIRED = True
+ACCOUNT_AUTHENTICATION_METHOD = "email"
+ACCOUNT_CONFIRM_EMAIL_ON_GET = True
+FRONTEND_URL = os.environ.get("FRONT_END_URL")
+ACCOUNT_EMAIL_CONFIRMATION_ANONYMOUS_REDIRECT_URL = FRONTEND_URL + "/verify-email" if FRONTEND_URL else "/"
+ACCOUNT_EMAIL_CONFIRMATION_AUTHENTICATED_REDIRECT_URL = FRONTEND_URL + "/verify-email" if FRONTEND_URL else "/"
+LOGIN_URL = FRONTEND_URL + "/auth/login"
+LOGIN_REDIRECT_URL = FRONTEND_URL
+ACCOUNT_PASSWORD_RESET_URL = FRONTEND_URL + "/auth/reset-password"
+ACCOUNT_CONFIRM_EXPIRED_URL = FRONTEND_URL + "/auth/email-expired"
+ACCOUNT_CONFIRM_EXPIRED_VERIFIED_URL = FRONTEND_URL + "/auth/email-verified"
+REGISTRATION_BASED_ON_DOMAINS = os.environ.get("REGISTRATION_BASED_ON_DOMAINS").lower() == "true"
+FERNET_KEY = os.environ.get("FERNET_ENCRYPTION_KEY")
+
+DEFAULT_FROM_EMAIL = os.environ.get("DEFAULT_FROM_EMAIL")
+ADMIN_EMAIL = os.environ.get("ADMIN_EMAIL")
 
 # Email Settings
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
@@ -205,3 +222,5 @@ EMAIL_HOST = os.environ.get('EMAIL_HOST')
 EMAIL_PORT = os.environ.get('EMAIL_PORT')
 EMAIL_HOST_USER = os.environ.get('EMAIL_HOST_USER')
 EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD')
+
+AUTH_USER_MODEL = "users.User"
