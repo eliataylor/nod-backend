@@ -11,10 +11,10 @@ from django.views.generic.base import TemplateView
 ####OBJECT-ACTIONS-URLS-STARTS####
 
 urlpatterns = [
-    path("admin/", admin.site.urls),
-    path('accounts/', include('allauth.urls')),
-    path("accounts/profile/", TemplateView.as_view(template_name="profile.html")),
+    path('admin/', admin.site.urls),
     path('', include("nod_app.urls")),
+    path('auth/', include("users.urls", namespace="users")),
+    path('accounts/', include('allauth.urls')),
 ]
 
 if settings.DEBUG:
