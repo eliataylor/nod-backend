@@ -40,9 +40,6 @@ class RelatedUserSerializer(serializers.ModelSerializer):
 
 
 class UserSerializer(serializers.ModelSerializer):
-    related_manager = RelatedUserSerializer()
-    customers = RelatedUserSerializer(many=True, read_only=True)
-
     class Meta:
         model = User
         exclude = ["user_permissions", "groups", "password"]
