@@ -4,20 +4,8 @@ from allauth.socialaccount.providers.google.views import GoogleOAuth2Adapter
 from allauth.socialaccount.providers.oauth2.client import OAuth2Client
 from dj_rest_auth.registration.views import RegisterView, SocialLoginView
 from dj_rest_auth.views import LoginView, PasswordChangeView, PasswordResetConfirmView
-from django.contrib.auth import get_user_model
-from django.db import IntegrityError
-from django.db.models import F, Value
-from django.db.models.functions import Coalesce
-from django.utils.crypto import get_random_string
-from django.utils.decorators import method_decorator
-from django_filters.rest_framework import DjangoFilterBackend
-from drf_yasg import openapi
-from drf_yasg.utils import swagger_auto_schema
 from rest_framework import filters, status
-from rest_framework.generics import ListAPIView, RetrieveUpdateAPIView, UpdateAPIView
-from rest_framework.permissions import IsAdminUser, IsAuthenticated
 from rest_framework.response import Response
-from rest_framework.views import APIView
 
 from utils.helpers import decrypt
 from nod_backend.settings import GOOGLE_CALLBACK_URL
@@ -67,3 +55,10 @@ class LimitedLoginView(LoginView):
 
         self.login()
         return self.get_response()
+
+
+class GoogleLogin(SocialLoginView):
+    adapter_class = GoogleOAuth2Adapter
+    client_class = OAuth2Client
+    callback_url = GOOGLE_CALLBACK_URL
+    serializer_class = CustomSocialLoginSerializer

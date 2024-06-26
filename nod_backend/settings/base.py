@@ -25,26 +25,25 @@ CSRF_TRUSTED_ORIGINS = os.getenv('DJANGO_CSRF_TRUSTED_ORIGINS', 'http://localhos
 # Application definition
 
 INSTALLED_APPS = [
-    'rest_framework',
-    'rest_framework.authtoken',
-    'corsheaders',
-    'address',
-    'djmoney',
-    'dj_rest_auth',
-    'dj_rest_auth.registration',
-    'drf_yasg',
-
-    'allauth',
-    'allauth.account',
-    'allauth.socialaccount',
-    'allauth.socialaccount.providers.google',
-
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
     "django.contrib.messages",
     "django.contrib.staticfiles",
     'django.contrib.sessions',
+
+    'rest_framework',
+    'rest_framework.authtoken',
+    'corsheaders',
+    'address',
+    'djmoney',
+    'allauth',
+    'allauth.account',
+    'allauth.socialaccount',
+    'allauth.socialaccount.providers.google',
+    'dj_rest_auth',
+    'dj_rest_auth.registration',
+    'drf_yasg',
 
     'nod_app',
     'users'
@@ -79,12 +78,16 @@ MFA_FORMS = {
 SOCIALACCOUNT_PROVIDERS = {
     'google': {
         'APP': {
-            'client_id': '',
-            'secret': '',
-            'key': ''
-        }
+            'client_id': os.environ.get('GOOGLE_OAUTH_CLIENT_ID'),
+            'secret': os.environ.get('GOOGLE_OAUTH_SECRET'),
+            'key': os.environ.get('GOOGLE_OAUTH_KEY'),
+        },
     }
 }
+GOOGLE_CALLBACK_URL = os.environ.get('GOOGLE_CALLBACK_URL')
+CLIENT_ID = os.environ.get('GOOGLE_OAUTH_CLIENT_ID')
+SECRET = os.environ.get('GOOGLE_OAUTH_SECRET')
+KEY = os.environ.get('GOOGLE_OAUTH_KEY')
 
 REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": [
@@ -215,12 +218,9 @@ DEFAULT_FROM_EMAIL = os.environ.get("DEFAULT_FROM_EMAIL")
 ADMIN_EMAIL = os.environ.get("ADMIN_EMAIL")
 
 # Email Settings
-EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_USE_TLS = True
-EMAIL_HOST = os.environ.get('EMAIL_HOST')
-EMAIL_PORT = os.environ.get('EMAIL_PORT')
-EMAIL_HOST_USER = os.environ.get('EMAIL_HOST_USER')
-EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD')
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+EMAIL_USE_LOCALTIME = True
+EMAIL_FILE_PATH = '/home/app-messages'  # change this to a proper location
 
 AUTH_USER_MODEL = "users.User"
 REST_AUTH_SERIALIZERS = {
@@ -233,6 +233,7 @@ REST_AUTH_REGISTER_SERIALIZERS = {
 }
 REST_AUTH = {
     'USE_JWT': True,
+    'JWT_AUTH_COOKIE': 'jwt-auth',
 }
 REST_USE_JWT = True
 JWT_AUTH_COOKIE = "nod-backend-auth"
