@@ -12,9 +12,7 @@ from django.views.generic.base import TemplateView
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', include("nod_app.urls")),
-    path('auth/', include("users.urls", namespace="users")),
-    path('accounts/', include('allauth.urls')),
+    path('', include("nod_app.urls"))
 ]
 
 if settings.DEBUG:
