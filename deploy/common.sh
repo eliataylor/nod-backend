@@ -1,16 +1,13 @@
 #!/bin/bash
 
-# Set Path
-PARENT_DIR="$(dirname "$SCRIPT_DIR")"
-
 # Find root .env
-ENV_FILE="$PARENT_DIR/.env"
+ENV_FILE="$1"
 
 # Load variables from root .env
 if [ -f "$ENV_FILE" ]; then
-  export $(grep -v '^#' "$ENV_FILE" | xargs)
+  export $(grep -vE '^\s*#' "$ENV_FILE" | sed 's/[[:space:]]*#.*//' | xargs)
 else
-  echo ".env file not found in the parent directory. Please create a .env file with the necessary variables."
+  echo ".env file not found at $ENV_FILE. Please create a .env file with the necessary variables."
   exit 1
 fi
 
