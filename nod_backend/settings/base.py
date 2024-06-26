@@ -25,17 +25,34 @@ CSRF_TRUSTED_ORIGINS = os.getenv('DJANGO_CSRF_TRUSTED_ORIGINS', 'http://localhos
 # Application definition
 
 INSTALLED_APPS = [
+    "django.contrib.admin",
+    "django.contrib.auth",
+    "django.contrib.contenttypes",
+    "django.contrib.messages",
+    "django.contrib.staticfiles",
+    'django.contrib.sessions',
+
     'rest_framework',
+    'rest_framework.authtoken',
     'corsheaders',
     'address',
     'djmoney',
-    'django.contrib.admin',
-    'django.contrib.auth',
-    'django.contrib.contenttypes',
-    'django.contrib.sessions',
-    'django.contrib.messages',
-    'django.contrib.staticfiles',
-    'nod_app'
+    'allauth',
+    'allauth.account',
+    'allauth.socialaccount',
+    'allauth.socialaccount.providers.google',
+    'dj_rest_auth',
+    'dj_rest_auth.registration',
+    'drf_yasg',
+
+    'nod_app',
+    'users'
+]
+
+
+AUTHENTICATION_BACKENDS = [
+    'django.contrib.auth.backends.ModelBackend',
+    'allauth.account.auth_backends.AuthenticationBackend',
 ]
 
 MIDDLEWARE = [
@@ -47,16 +64,37 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'django.middleware.security.SecurityMiddleware'
+
+    "allauth.account.middleware.AccountMiddleware",
 ]
 
+MFA_FORMS = {
+    'authenticate': 'allauth.mfa.forms.AuthenticateForm',
+    'reauthenticate': 'allauth.mfa.forms.AuthenticateForm',
+    'activate_totp': 'allauth.mfa.forms.ActivateTOTPForm',
+    'deactivate_totp': 'allauth.mfa.forms.DeactivateTOTPForm',
+}
+
+SOCIALACCOUNT_PROVIDERS = {
+    'google': {
+        'APP': {
+            'client_id': os.environ.get('GOOGLE_OAUTH_CLIENT_ID'),
+            'secret': os.environ.get('GOOGLE_OAUTH_SECRET'),
+            'key': os.environ.get('GOOGLE_OAUTH_KEY'),
+        },
+    }
+}
+GOOGLE_CALLBACK_URL = os.environ.get('GOOGLE_CALLBACK_URL')
+CLIENT_ID = os.environ.get('GOOGLE_OAUTH_CLIENT_ID')
+SECRET = os.environ.get('GOOGLE_OAUTH_SECRET')
+KEY = os.environ.get('GOOGLE_OAUTH_KEY')
+
 REST_FRAMEWORK = {
+    "DEFAULT_AUTHENTICATION_CLASSES": [
+        "dj_rest_auth.jwt_auth.JWTCookieAuthentication",
+    ],
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
     'PAGE_SIZE': 15,
-    'DEFAULT_RENDERER_CLASSES': (
-        'rest_framework.renderers.JSONRenderer',
-        'rest_framework.renderers.BrowsableAPIRenderer',
-    ),
     'DEFAULT_PERMISSION_CLASSES': (
         # 'rest_framework.permissions.IsAuthenticated',
         'rest_framework.permissions.IsAuthenticatedOrReadOnly',
@@ -96,6 +134,10 @@ DATABASES = {
     }
 }
 
+CORS_ALLOWED_ORIGINS = [
+    "http://127.0.0.1:3000",
+    "http://localhost:3000",
+]
 
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
@@ -151,3 +193,48 @@ MEDIA_URL = '/media/'
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
+#### needs to be tracked in Object actions:
+DEFAULT_AUTO_FIELD='django.db.models.AutoField'
+GOOGLE_API_KEY = 'CHANGEME'
+
+GOOGLE_CALLBACK_URL = os.environ.get("GOOGLE_CALLBACK_URL")
+
+ACCOUNT_EMAIL_VERIFICATION = "mandatory"
+ACCOUNT_EMAIL_REQUIRED = True
+ACCOUNT_AUTHENTICATION_METHOD = "email"
+ACCOUNT_CONFIRM_EMAIL_ON_GET = True
+FRONTEND_URL = os.environ.get("FRONT_END_URL")
+ACCOUNT_EMAIL_CONFIRMATION_ANONYMOUS_REDIRECT_URL = FRONTEND_URL + "/verify-email" if FRONTEND_URL else "/"
+ACCOUNT_EMAIL_CONFIRMATION_AUTHENTICATED_REDIRECT_URL = FRONTEND_URL + "/verify-email" if FRONTEND_URL else "/"
+LOGIN_URL = FRONTEND_URL + "/auth/login"
+LOGIN_REDIRECT_URL = FRONTEND_URL
+ACCOUNT_PASSWORD_RESET_URL = FRONTEND_URL + "/auth/reset-password"
+ACCOUNT_CONFIRM_EXPIRED_URL = FRONTEND_URL + "/auth/email-expired"
+ACCOUNT_CONFIRM_EXPIRED_VERIFIED_URL = FRONTEND_URL + "/auth/email-verified"
+REGISTRATION_BASED_ON_DOMAINS = os.environ.get("REGISTRATION_BASED_ON_DOMAINS").lower() == "true"
+FERNET_KEY = os.environ.get("FERNET_ENCRYPTION_KEY")
+
+DEFAULT_FROM_EMAIL = os.environ.get("DEFAULT_FROM_EMAIL")
+ADMIN_EMAIL = os.environ.get("ADMIN_EMAIL")
+
+# Email Settings
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+EMAIL_USE_LOCALTIME = True
+EMAIL_FILE_PATH = '/home/app-messages'  # change this to a proper location
+
+AUTH_USER_MODEL = "users.User"
+REST_AUTH_SERIALIZERS = {
+    "USER_DETAILS_SERIALIZER": "users.serializers.UserSerializer",
+    "PASSWORD_RESET_SERIALIZER": "users.serializers.CustomPasswordResetSerializer",
+    "LOGIN_SERIALIZER": "users.serializers.CustomLoginSerializer",
+}
+REST_AUTH_REGISTER_SERIALIZERS = {
+    "REGISTER_SERIALIZER": "users.serializers.UserRegistrationSerializer",
+}
+REST_AUTH = {
+    'USE_JWT': True,
+    'JWT_AUTH_COOKIE': 'jwt-auth',
+}
+REST_USE_JWT = True
+JWT_AUTH_COOKIE = "nod-backend-auth"
+JWT_AUTH_REFRESH_COOKIE = "refreshToken"
