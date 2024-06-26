@@ -34,6 +34,12 @@ gcloud auth login
 # Get Project Number
 PROJECT_NUMBER=$(gcloud projects describe $GCP_PROJECT_ID --format="value(projectNumber)" 2>/dev/null)
 
+# CLOUD_RUN_SERVICE_NAME="my-cloud-run-service"
+echo "You may need to assign the Cloud Run Developer role to your cloud run service?"
+# gcloud run services add-iam-policy-binding "$CLOUD_RUN_SERVICE_NAME" \
+#    --member "serviceAccount:$SERVICE_ACCOUNT_EMAIL" \
+#    --role "roles/run.developer"
+
 # Deploy to Cloud Run
 echo "Deploying container to Cloud Run..."
 gcloud run deploy $PROGRAM_NAME \
