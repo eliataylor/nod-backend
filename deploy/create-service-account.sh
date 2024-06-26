@@ -16,6 +16,20 @@ gcloud auth login
 # Set Default GCP Project
 gcloud config set project $GCP_PROJECT_ID
 
+
+# Create and Generate Service Account Key, save it as $GCP_SA_KEY_PATH with the following IAM Permissions:
+# Artifact Registry Administrator
+# Service Account User (roles/iam.serviceAccountUser)
+# Cloud Run Developer (roles/run.developer) on the Cloud Run service
+# Artifact Registry Administrator
+# Cloud Build Service Account
+# Cloud Run Admin
+# Secret Manager Secret Accessor (roles/secretmanager.secretAccessor)
+# Service Account User
+# Storage Object Creator
+# Storage Object Viewer
+
+
 ROLES=(
     "roles/artifactregistry.admin"
     "roles/iam.serviceAccountUser"

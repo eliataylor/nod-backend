@@ -15,18 +15,6 @@ if [ -f "$ENV_FILE" ]; then
   # Remove any 'export ' prefix
   env_content=$(echo "$env_content" | sed 's/^export //')
 
-  # Remove = followed by a space and a double quote
-  env_content=$(echo "$env_content" | sed 's/=\s*"//g')
-
-  # Remove = followed by a space and a single quote
-  env_content=$(echo "$env_content" | sed "s/=\s*'//g")
-
-  # Remove a double quote at the end
-  env_content=$(echo "$env_content" | sed 's/"$//')
-
-  # Remove a single quote at the end
-  env_content=$(echo "$env_content" | sed "s/'$//")
-
   # Export the variables
   export $(echo "$env_content" | xargs)
 else
@@ -62,4 +50,23 @@ sanitize_bucket_name() {
   # Trim to 63 characters max (to comply with bucket name length limit)
   name=$(echo "$name" | cut -c 1-63)
   echo "$name"
+}
+
+urlencode() {
+  local string="${1}"
+  local encoded=""
+  local char
+
+  for (( i=0; i<${#string}; i++ )); do
+    char="${string:i:1}"
+    case "$char" in
+      [a-zA-Z0-9.~_-]) encoded+="$char" ;;
+      ' ') encoded+="%20" ;;
+      *) printf -v encoded_char '%%%02X' "'$char"
+         encoded+="$encoded_char"
+         ;;
+    esac
+  done
+
+  echo "$encoded"
 }
