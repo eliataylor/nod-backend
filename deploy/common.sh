@@ -1,11 +1,34 @@
 #!/bin/bash
 
+
 # Find root .env
 ENV_FILE="$1"
 
 # Load variables from root .env
 if [ -f "$ENV_FILE" ]; then
-  export $(grep -vE '^\s*#' "$ENV_FILE" | sed 's/[[:space:]]*#.*//' | xargs)
+  # Remove entire lines that are comments
+  env_content=$(grep -vE '^\s*#' "$ENV_FILE")
+
+  # Strip inline comments
+  env_content=$(echo "$env_content" | sed 's/[[:space:]]*#.*//')
+
+  # Remove any 'export ' prefix
+  env_content=$(echo "$env_content" | sed 's/^export //')
+
+  # Remove = followed by a space and a double quote
+  env_content=$(echo "$env_content" | sed 's/=\s*"//g')
+
+  # Remove = followed by a space and a single quote
+  env_content=$(echo "$env_content" | sed "s/=\s*'//g")
+
+  # Remove a double quote at the end
+  env_content=$(echo "$env_content" | sed 's/"$//')
+
+  # Remove a single quote at the end
+  env_content=$(echo "$env_content" | sed "s/'$//")
+
+  # Export the variables
+  export $(echo "$env_content" | xargs)
 else
   echo ".env file not found at $ENV_FILE. Please create a .env file with the necessary variables."
   exit 1
