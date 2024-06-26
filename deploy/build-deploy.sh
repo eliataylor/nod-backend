@@ -61,8 +61,8 @@ for var in "${secret_vars[@]}"; do
 #  echo "Secret Var: $var=$secret_value"  # Debug print
 done
 
-echo "\n\n$secret_arg"
-echo "\n\n$env_arg"
+printf "\n\n$secret_arg"
+printf "\n\n$env_arg"
 
 # Deploy to Cloud Run
 echo "Deploying project number - $PROJECT_NUMBER - container to Cloud Run..."
@@ -78,4 +78,4 @@ gcloud run deploy $PROGRAM_NAME \
     --set-env-vars "$env_arg" \
     --set-secrets "$secret_arg"
 
-echo -e "\nBuild and Deploy to Cloud Run completed."
+printf "\nBuild and Deploy to Cloud Run completed."

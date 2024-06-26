@@ -47,7 +47,7 @@ if ! gcloud storage buckets describe gs://$SERVICE_NAME-$PROJECT_NUMBER-bucket -
         --default-storage-class=standard \
         --location='us'
 else
-  echo -e "\e[31m$SERVICE_NAME-$PROJECT_NUMBER-bucket already exists. Skipping creation.\e[0m"
+  printf "\e[31m$SERVICE_NAME-$PROJECT_NUMBER-bucket already exists. Skipping creation.\e[0m"
 fi
 
 # Create Cloud SQL for MySQL Database
@@ -59,7 +59,7 @@ fi
 #         --memory=3840MB \
 #         --region=$GCP_REGION
 # else
-#   echo -e "\e[31m$SERVICE_NAME-$PROJECT_NUMBER-mysql already exists. Skipping creation.\e[0m"
+#   printf "\e[31m$SERVICE_NAME-$PROJECT_NUMBER-mysql already exists. Skipping creation.\e[0m"
 # fi
 
 # Set Secret Manager Secret Accessor to access Secrets
@@ -90,7 +90,7 @@ if ! gcloud artifacts repositories describe $AR_REPO_NAME > /dev/null 2>&1; then
         --immutable-tags \
         --async
 else
-    echo -e "\e[31mArtifact Registry repository $AR_REPO_NAME already exists. Skipping creation.\e[0m"
+    printf "\e[31mArtifact Registry repository $AR_REPO_NAME already exists. Skipping creation.\e[0m"
 fi
 echo
 
@@ -111,4 +111,4 @@ gcloud builds submit . \
 #     --update-env-vars DJANGO_ALLOWED_HOSTS='nod-django-app-7z6iwfp5aa-uw.a.run.app' \
 #     --update-env-vars DJANGO_CSRF_TRUSTED_ORIGINS='https://nod-django-app-7z6iwfp5aa-uw.a.run.app'
 
-echo -e "\ Setup completed."
+printf "\ Setup completed."

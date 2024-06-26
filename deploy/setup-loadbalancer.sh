@@ -41,7 +41,7 @@ if ! gcloud compute addresses describe $SERVICE_NAME-$PROJECT_NUMBER-ip --global
         --ip-version=IPV4 \
         --global
 else
-  echo -e "\e[31mIP address $SERVICE_NAME-$PROJECT_NUMBER-ip already exists. Skipping creation.\e[0m"
+  printf "\e[31mIP address $SERVICE_NAME-$PROJECT_NUMBER-ip already exists. Skipping creation.\e[0m"
 fi
 
 # Set the IP address as environment variable
@@ -63,10 +63,10 @@ if ! gcloud dns managed-zones describe $GCP_DNS_ZONE_NAME > /dev/null 2>&1; then
     if ! gcloud dns record-sets describe $DOMAIN_NAME. --type=A --zone=$GCP_DNS_ZONE_NAME > /dev/null 2>&1; then
         gcloud dns record-sets create $DOMAIN_NAME. --zone="$GCP_DNS_ZONE_NAME" --type="A" --ttl="300" --rrdatas="$STATIC_IP"
     else
-        echo -e "\e[31mDNS record $DOMAIN_NAME already exists. Skipping creation.\e[0m"
+        printf "\e[31mDNS record $DOMAIN_NAME already exists. Skipping creation.\e[0m"
     fi
 else
-    echo -e "\e[31mDNS zone $GCP_DNS_ZONE_NAME already exists. Skipping creation.\e[0m"
+    printf "\e[31mDNS zone $GCP_DNS_ZONE_NAME already exists. Skipping creation.\e[0m"
 fi
 echo
 
@@ -78,7 +78,7 @@ if ! gcloud compute ssl-certificates describe $SERVICE_NAME-$PROJECT_NUMBER-ssl 
         --domains=$DOMAIN_NAME \
         --global
 else
-    echo -e "\e[31mSSL certificate $SERVICE_NAME-$PROJECT_NUMBER-ssl already exists. Skipping creation.\e[0m"
+    printf "\e[31mSSL certificate $SERVICE_NAME-$PROJECT_NUMBER-ssl already exists. Skipping creation.\e[0m"
 fi
 echo
 
@@ -92,7 +92,7 @@ if ! gcloud compute network-endpoint-groups describe $SERVICE_NAME-$PROJECT_NUMB
         --network-endpoint-type=serverless  \
         --cloud-run-service=$SERVICE_NAME
 else
-    echo -e "\e[31m$SERVICE_NAME-$PROJECT_NUMBER-neg already exists. Skipping creation.\e[0m"
+    printf "\e[31m$SERVICE_NAME-$PROJECT_NUMBER-neg already exists. Skipping creation.\e[0m"
 fi
 echo
 
@@ -111,7 +111,7 @@ if ! gcloud compute backend-services describe $SERVICE_NAME-$PROJECT_NUMBER-bs >
         --network-endpoint-group=$SERVICE_NAME-$PROJECT_NUMBER-neg \
         --network-endpoint-group-region=$GCP_REGION
 else
-    echo -e "\e[31m$SERVICE_NAME-$PROJECT_NUMBER-bs already exists. Skipping creation.\e[0m"
+    printf "\e[31m$SERVICE_NAME-$PROJECT_NUMBER-bs already exists. Skipping creation.\e[0m"
 fi
 echo
 
@@ -124,7 +124,7 @@ gcloud compute url-maps create $SERVICE_NAME-$PROJECT_NUMBER-url-map \
     --default-service $SERVICE_NAME-$PROJECT_NUMBER-bs \
     --global
 else
-    echo -e "\e[31m$SERVICE_NAME-$PROJECT_NUMBER-url-map already exists. Skipping creation.\e[0m"
+    printf "\e[31m$SERVICE_NAME-$PROJECT_NUMBER-url-map already exists. Skipping creation.\e[0m"
 fi
 echo
 
@@ -135,7 +135,7 @@ if ! gcloud compute url-maps describe http-to-https-redirect > /dev/null 2>&1; t
         --source $SCRIPT_DIR/http-to-https.yaml \
         --global
 else
-    echo -e "\e[31mhttp-to-https-redirect already exists. Skipping creation.\e[0m"
+    printf "\e[31mhttp-to-https-redirect already exists. Skipping creation.\e[0m"
 fi
 echo
 
@@ -148,7 +148,7 @@ if ! gcloud compute target-http-proxies describe $SERVICE_NAME-$PROJECT_NUMBER-h
         --url-map=http-to-https-redirect \
         --global
 else
-    echo -e "\e[31m$SERVICE_NAME-$PROJECT_NUMBER-http-proxy already exists. Skipping creation.\e[0m"
+    printf "\e[31m$SERVICE_NAME-$PROJECT_NUMBER-http-proxy already exists. Skipping creation.\e[0m"
 fi
 echo
 
@@ -160,7 +160,7 @@ if ! gcloud compute target-https-proxies describe $SERVICE_NAME-$PROJECT_NUMBER-
         --url-map=$SERVICE_NAME-$PROJECT_NUMBER-url-map
         --global
 else
-    echo -e "\e[31m$SERVICE_NAME-$PROJECT_NUMBER-https-proxy already exists. Skipping creation.\e[0m"
+    printf "\e[31m$SERVICE_NAME-$PROJECT_NUMBER-https-proxy already exists. Skipping creation.\e[0m"
 fi
 echo
 
@@ -176,7 +176,7 @@ if ! gcloud compute forwarding-rules describe $SERVICE_NAME-$PROJECT_NUMBER-http
         --global \
         --ports=80
 else
-    echo -e "\e[31m$SERVICE_NAME-$PROJECT_NUMBER-http-lb already exists. Skipping creation.\e[0m"
+    printf "\e[31m$SERVICE_NAME-$PROJECT_NUMBER-http-lb already exists. Skipping creation.\e[0m"
 fi
 echo
 
@@ -191,9 +191,9 @@ if ! gcloud compute forwarding-rules describe $SERVICE_NAME-$PROJECT_NUMBER-http
         --global \
         --ports=443
 else
-    echo -e "\e[31m$SERVICE_NAME-$PROJECT_NUMBER-https-lb already exists. Skipping creation.\e[0m"
+    printf "\e[31m$SERVICE_NAME-$PROJECT_NUMBER-https-lb already exists. Skipping creation.\e[0m"
 fi
 echo
 
 
-echo -e "\nLoad balancer setup completed."
+printf "\nLoad balancer setup completed."
