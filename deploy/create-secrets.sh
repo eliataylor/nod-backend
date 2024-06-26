@@ -25,6 +25,20 @@ while IFS= read -r line || [[ -n "$line" ]]; do
   key=$(echo "$line" | cut -d '=' -f 1)
   value=$(echo "$line" | cut -d '=' -f 2- | cut -d '#' -f 1 | sed 's/[[:space:]]*$//')
 
+    # Remove = followed by a space and a double quote
+  value=$(echo "$value" | sed 's/=\s*"//g')
+
+  # Remove = followed by a space and a single quote
+  value=$(echo "$value" | sed "s/=\s*'//g")
+
+  # Remove a double quote at the end
+  value=$(echo "$value" | sed 's/"$//')
+
+  # Remove a single quote at the end
+  value=$(echo "$value" | sed "s/'$//")
+
+
+
   # Create or update the secret in GCP Secret Manager
   echo "Processing secret for $key..."
 
