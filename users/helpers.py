@@ -1,4 +1,5 @@
 from django.contrib.auth import get_user_model
+from django.core.mail import send_mail
 
 from nod_backend.settings import (
     ADMIN_EMAIL,
@@ -17,14 +18,13 @@ def check_if_domain_allowed(user_email):
 
 def notify_admin_that_user_wanted_to_signup(user_email):
     admin_email = ADMIN_EMAIL or DEFAULT_FROM_EMAIL
-    body_data = {
-        "subject": "The user was trying to sign up",
-        "recipients": [admin_email],
-        "type": "html",
-        "template_name": "user/notify_admin_that_user_wanted_to_signup.html",
-        "template_body": {
-            "user_email": user_email,
-        },
-    }
-    # brm_api_client.send_email(body_data)
+
+    send_mail(
+        'Subject here',
+        f'{user_email} wants to sign up',
+        admin_email,
+        [user_email],
+        fail_silently=False,
+    )
+
     return "notify_admin_that_user_wanted_to_signup"

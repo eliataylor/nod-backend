@@ -142,7 +142,7 @@ class CustomSocialLoginSerializer(SocialLoginSerializer):
             raise serializers.ValidationError(_("Define adapter_class in view"))
 
         adapter = adapter_class(request)
-        app = adapter.get_provider().get_app(request)
+        app = adapter.get_provider().app
 
         # More info on code vs access_token
         # http://stackoverflow.com/questions/8666316/facebook-oauth-2-0-code-and-token
@@ -200,7 +200,7 @@ class CustomSocialLoginSerializer(SocialLoginSerializer):
 
         try:
             if adapter.provider_id == "google":
-                login = self.get_social_login(adapter, app, social_token, response={"id_token": token})
+                login = self.get_social_login(adapter, app, social_token, response={"access_token": token})
             else:
                 login = self.get_social_login(adapter, app, social_token, token)
             self.check_domain(login)
@@ -232,7 +232,6 @@ class CustomSocialLoginSerializer(SocialLoginSerializer):
                     .first()
                 )
 
-                self.check_user_access_status(attrs["user"])
                 return attrs
 
             login.lookup()
