@@ -38,9 +38,8 @@ DATABASES = {
     }
 }
 
-# try:
-#     from .local import *
-# except ImportError:
-#     pass
 
-print(f"Production setting (production.py) is Loaded")
+SPECTACULAR_SETTINGS = {
+    "SERVE_PUBLIC" : False,
+    "SERVE_INCLUDE_SCHEMA" : False
+}
