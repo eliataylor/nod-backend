@@ -17,7 +17,7 @@ DEBUG = os.getenv('DJANGO_DEBUG', 'True')
 # Superuser creation settings
 SUPERUSER_USERNAME = os.getenv('DJANGO_SUPERUSER_USERNAME', 'admin')
 SUPERUSER_PASSWORD = os.getenv('DJANGO_SUPERUSER_PASSWORD', 'admin')
-SUPERUSER_EMAIL = os.getenv('DJANGO_SUPERUSER_EMAIL', 'admin@example.com')
+SUPERUSER_EMAIL = os.getenv('DJANGO_SUPERUSER_EMAIL', 'eli@taylormadetraffic.com')
 
 ALLOWED_HOSTS = os.getenv('DJANGO_ALLOWED_HOSTS', 'localhost,127.0.0.1').split(',')
 CSRF_TRUSTED_ORIGINS = os.getenv('DJANGO_CSRF_TRUSTED_ORIGINS', 'http://localhost,http://127.0.0.1').split(',')
@@ -43,7 +43,7 @@ INSTALLED_APPS = [
     'allauth.socialaccount.providers.google',
     'dj_rest_auth',
     'dj_rest_auth.registration',
-    'drf_yasg',
+    'drf_spectacular',
 
     'nod_app',
     'users'
@@ -97,6 +97,7 @@ REST_FRAMEWORK = {
         # 'rest_framework.permissions.IsAuthenticated',
         'rest_framework.permissions.IsAuthenticatedOrReadOnly',
     ),
+    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
 }
 
 ROOT_URLCONF = 'nod_backend.urls'
@@ -212,11 +213,22 @@ ACCOUNT_CONFIRM_EXPIRED_VERIFIED_URL = FRONTEND_URL + "/auth/email-verified"
 REGISTRATION_BASED_ON_DOMAINS = os.environ.get("REGISTRATION_BASED_ON_DOMAINS").lower() == "true"
 FERNET_KEY = os.environ.get("FERNET_ENCRYPTION_KEY")
 
+# Email Settings
+# EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+
+# SMTP server configuration
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587  # or 465 for SSL
+EMAIL_USE_TLS = True  # or False for SSL
+EMAIL_USE_SSL = False  # True if using SSL
+EMAIL_HOST_USER = os.environ.get("SMTP_EMAIL_ADDRESS")
+EMAIL_HOST_PASSWORD = os.environ.get("SMTP_PASSWORD")
+
 DEFAULT_FROM_EMAIL = os.environ.get("DEFAULT_FROM_EMAIL")
 ADMIN_EMAIL = os.environ.get("ADMIN_EMAIL")
 
-# Email Settings
-EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+# EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 EMAIL_USE_LOCALTIME = True
 EMAIL_FILE_PATH = '/home/app-messages'  # change this to a proper location
 
