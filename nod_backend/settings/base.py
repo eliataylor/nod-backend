@@ -82,6 +82,7 @@ SOCIALACCOUNT_PROVIDERS = {
         },
     }
 }
+
 GOOGLE_CALLBACK_URL = os.environ.get('GOOGLE_CALLBACK_URL')
 CLIENT_ID = os.environ.get('GOOGLE_OAUTH_CLIENT_ID')
 SECRET = os.environ.get('GOOGLE_OAUTH_SECRET')
@@ -125,11 +126,13 @@ WSGI_APPLICATION = 'nod_backend.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
-
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+    "default": {
+        "ENGINE": "django.db.backends.mysql",
+        "NAME": os.getenv("MYSQL_DATABASE"),
+        "USER": os.getenv("MYSQL_USER"),
+        "PASSWORD": os.getenv("MYSQL_PASSWORD"),
+        "HOST": os.getenv("MYSQL_HOST")
     }
 }
 
