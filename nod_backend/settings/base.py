@@ -75,17 +75,17 @@ MFA_FORMS = {
 SOCIALACCOUNT_PROVIDERS = {
     'google': {
         'APP': {
-            'client_id': os.environ.get('GOOGLE_OAUTH_CLIENT_ID'),
-            'secret': os.environ.get('GOOGLE_OAUTH_SECRET'),
-            'key': os.environ.get('GOOGLE_OAUTH_KEY'),
+            'client_id': os.environ.get('GOOGLE_OAUTH_CLIENT_ID', ""),
+            'secret': os.environ.get('GOOGLE_OAUTH_SECRET', ""),
+            'key': os.environ.get('GOOGLE_OAUTH_KEY', ""),
         },
     }
 }
 
-GOOGLE_CALLBACK_URL = os.environ.get('GOOGLE_CALLBACK_URL')
-CLIENT_ID = os.environ.get('GOOGLE_OAUTH_CLIENT_ID')
-SECRET = os.environ.get('GOOGLE_OAUTH_SECRET')
-KEY = os.environ.get('GOOGLE_OAUTH_KEY')
+GOOGLE_CALLBACK_URL = os.environ.get('GOOGLE_CALLBACK_URL', "")
+CLIENT_ID = os.environ.get('GOOGLE_OAUTH_CLIENT_ID', "")
+SECRET = os.environ.get('GOOGLE_OAUTH_SECRET', "")
+KEY = os.environ.get('GOOGLE_OAUTH_KEY', "")
 
 REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": [
@@ -198,13 +198,13 @@ DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
 DEFAULT_AUTO_FIELD='django.db.models.AutoField'
 GOOGLE_API_KEY = 'CHANGEME'
 
-GOOGLE_CALLBACK_URL = os.environ.get("GOOGLE_CALLBACK_URL")
+GOOGLE_CALLBACK_URL = os.environ.get("GOOGLE_CALLBACK_URL", "")
 
 ACCOUNT_EMAIL_VERIFICATION = "mandatory"
 ACCOUNT_EMAIL_REQUIRED = True
 ACCOUNT_AUTHENTICATION_METHOD = "email"
 ACCOUNT_CONFIRM_EMAIL_ON_GET = True
-FRONTEND_URL = os.environ.get("FRONT_END_URL")
+FRONTEND_URL = os.environ.get("FRONT_END_URL", "https://localhost:3000")
 ACCOUNT_EMAIL_CONFIRMATION_ANONYMOUS_REDIRECT_URL = FRONTEND_URL + "/verify-email" if FRONTEND_URL else "/"
 ACCOUNT_EMAIL_CONFIRMATION_AUTHENTICATED_REDIRECT_URL = FRONTEND_URL + "/verify-email" if FRONTEND_URL else "/"
 LOGIN_URL = FRONTEND_URL + "/auth/login"
@@ -212,23 +212,23 @@ LOGIN_REDIRECT_URL = FRONTEND_URL
 ACCOUNT_PASSWORD_RESET_URL = FRONTEND_URL + "/auth/reset-password"
 ACCOUNT_CONFIRM_EXPIRED_URL = FRONTEND_URL + "/auth/email-expired"
 ACCOUNT_CONFIRM_EXPIRED_VERIFIED_URL = FRONTEND_URL + "/auth/email-verified"
-REGISTRATION_BASED_ON_DOMAINS = os.environ.get("REGISTRATION_BASED_ON_DOMAINS").lower() == "true"
-FERNET_KEY = os.environ.get("FERNET_ENCRYPTION_KEY")
+REGISTRATION_BASED_ON_DOMAINS = os.environ.get("REGISTRATION_BASED_ON_DOMAINS", "False").lower() == "true"
+FERNET_KEY = os.environ.get("FERNET_ENCRYPTION_KEY", "")
 
 # Email Settings
 # EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 
 # SMTP server configuration
-EMAIL_HOST = 'smtp.gmail.com'
-EMAIL_PORT = 587  # or 465 for SSL
+EMAIL_HOST = os.environ.get("SMTP_EMAIL_HOST", 'smtp.gmail.com')
+EMAIL_PORT = os.environ.get("SMTP_EMAIL_PORT", 587)  # or 465 for SSL
 EMAIL_USE_TLS = True  # or False for SSL
 EMAIL_USE_SSL = False  # True if using SSL
-EMAIL_HOST_USER = os.environ.get("SMTP_EMAIL_ADDRESS")
-EMAIL_HOST_PASSWORD = os.environ.get("SMTP_PASSWORD")
+EMAIL_HOST_USER = os.environ.get("SMTP_EMAIL_ADDRESS", "")
+EMAIL_HOST_PASSWORD = os.environ.get("SMTP_PASSWORD", "")
 
-DEFAULT_FROM_EMAIL = os.environ.get("DEFAULT_FROM_EMAIL")
-ADMIN_EMAIL = os.environ.get("ADMIN_EMAIL")
+DEFAULT_FROM_EMAIL = os.environ.get("DEFAULT_FROM_EMAIL", "")
+ADMIN_EMAIL = os.environ.get("ADMIN_EMAIL", "")
 
 # EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 EMAIL_USE_LOCALTIME = True
