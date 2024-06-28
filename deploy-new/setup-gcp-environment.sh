@@ -8,10 +8,14 @@
 required_vars=("GCP_PROJECT_ID" "GCP_REGION" "AR_LOCATION" "GCP_DNS_ZONE_NAME" "GCP_BUCKET_LOCATION" "SERVICE_ACCOUNT_NAME")
 
 # Set Path
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+SCRIPT_DIR="$(realpath $(dirname $0))"
 
-# Validate environment variables or exit
-source "$SCRIPT_DIR/common.sh"
+# Export all functions
+source "$SCRIPT_DIR/functions.sh"
+
+# Check and Set environment variables
+check_required_vars "${required_vars[@]}"
+read_env
 
 
 # Section 1: Setup gcloud CLI using Service Account Key
@@ -65,20 +69,20 @@ print_success "Project number: $PROJECT_NUMBER" "Retrieved"
 # Section 3: Create an Artifact Registry repository
 show_section_header "Creating Artifact Registry repository..."
 show_loading "Creating repository"
-if ! gcloud artifacts repositories describe $SERVICE_NAME-$PROJECT_NUMBER-repo --location=$AR_LOCATION > /dev/null 2>&1; then
-    gcloud artifacts repositories create $SERVICE_NAME-$PROJECT_NUMBER-repo \
+if ! gcloud artifacts repositories describe $SERVICE_NAME-repo --location=$AR_LOCATION > /dev/null 2>&1; then
+    gcloud artifacts repositories create $SERVICE_NAME-repo \
         --repository-format=docker \
         --location=$AR_LOCATION \
         --description="DESCRIPTION" \
         --async
     if [ $? -ne 0 ]; then
-        print_error "$SERVICE_NAME-$PROJECT_NUMBER-repo repository creation" "Failed"
+        print_error "$SERVICE_NAME-repo repository creation" "Failed"
         exit 1
     else
-        print_success "$SERVICE_NAME-$PROJECT_NUMBER-repo repository" "Created"
+        print_success "$SERVICE_NAME-repo repository" "Created"
     fi
 else
-    print_warning "$SERVICE_NAME-$PROJECT_NUMBER-repo repository already exists" "Skipped"
+    print_warning "$SERVICE_NAME-repo repository already exists" "Skipped"
 fi
 
 # Section 4: GCS Bucket Creation
@@ -99,11 +103,11 @@ else
     print_warning "gs://$SERVICE_NAME-$PROJECT_NUMBER-bucket bucket already exists" "Skipped"
 fi
 
-# Section 5: Cloud SQL for MySQL instance creation
+Section 5: Cloud SQL for MySQL instance creation
 show_section_header "Creating Cloud SQL for MySQL instance..."
 show_loading "Creating MySQL instance"
-if ! gcloud sql instances describe $SERVICE_NAME-$PROJECT_NUMBER-mysql > /dev/null 2>&1; then
-    gcloud sql instances create $SERVICE_NAME-$PROJECT_NUMBER-mysql \
+if ! gcloud sql instances describe $SERVICE_NAME-mysql > /dev/null 2>&1; then
+    gcloud sql instances create $SERVICE_NAME-mysql \
         --database-version=MYSQL_8_0 \
         --cpu=2 \
         --memory=3840MB \
@@ -111,12 +115,12 @@ if ! gcloud sql instances describe $SERVICE_NAME-$PROJECT_NUMBER-mysql > /dev/nu
         --availability-type=ZONAL
 
     if [ $? -ne 0 ]; then
-        print_error "$SERVICE_NAME-$PROJECT_NUMBER-mysql instance creation" "Failed"
+        print_error "$SERVICE_NAME-mysql instance creation" "Failed"
     else
-        print_success "$SERVICE_NAME-$PROJECT_NUMBER-mysql instance" "Created"
+        print_success "$SERVICE_NAME-mysql instance" "Created"
     fi
 else
-    print_warning "$SERVICE_NAME-$PROJECT_NUMBER-mysql instance already exists" "Skipped"
+    print_warning "$SERVICE_NAME-mysql instance already exists" "Skipped"
 fi
 
 echo -e "\nGoogle Cloud environment setup completed successfully.\n"

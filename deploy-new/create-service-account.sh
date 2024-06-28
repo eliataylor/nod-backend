@@ -1,11 +1,17 @@
+#!/bin/bash
+
 # Define required environment variables for this script
 required_vars=("GCP_PROJECT_ID" "SERVICE_ACCOUNT_NAME")
 
 # Set Path
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+SCRIPT_DIR="$(realpath $(dirname $0))"
 
-# Validate environment variables or exit
-source "$SCRIPT_DIR/common.sh"
+# Export all functions
+source "$SCRIPT_DIR/functions.sh"
+
+# Check and Set environment variables
+check_required_vars "${required_vars[@]}"
+read_env
 
 # Set your variables
 KEY_FILE_PATH="$SCRIPT_DIR/$SERVICE_ACCOUNT_NAME.json"
@@ -73,7 +79,7 @@ roles=(
     "roles/storage.admin"
 )
 for role in "${roles[@]}"; do
-    if [[ $(gcloud projects get-iam-policy $GCP_PROJECT_ID --flatten="bindings[].members" --format='table(bindings.role)' --filter="bindings.members:$SERVICE_ACCOUNT_NAME@$GCP_PROJECT_ID.iam.gserviceaccount.com AND bindings.role:$role") == ROLE* ]] then
+    if [[ $(gcloud projects get-iam-policy $GCP_PROJECT_ID --flatten="bindings[].members" --format='table(bindings.role)' --filter="bindings.members:$SERVICE_ACCOUNT_NAME@$GCP_PROJECT_ID.iam.gserviceaccount.com AND bindings.role:$role") == ROLE* ]]; then
         print_warning "$role role already exists" "Skipped"
     else
         gcloud projects add-iam-policy-binding $GCP_PROJECT_ID \

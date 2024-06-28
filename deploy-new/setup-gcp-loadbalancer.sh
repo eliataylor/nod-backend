@@ -1,23 +1,18 @@
 #!/bin/bash
 
-# Create and Generate Service Account Key, save it as 'sa_key.json' in the root folder with the following IAM Permissions:
-# Network Admin             # Create load balancer components
-# Compute Security Admin    # Create Google-managed SSL certificates
-# DNS Administrator         # To manage Cloud DNS
-#
-# You can also using your own user that has Owner/Editor permissions
-# Comment `gcloud auth login --cred-file="$PARENT_DIR/sa_key.json"` command below
-# Make sure you have already setup gcloud SDK (gcloud CLI) and login with your account
-# Documentation : https://cloud.google.com/sdk/docs/authorizing
-
 # Define required environment variables for this script
 required_vars=("GCP_PROJECT_ID" "GCP_REGION" "GCP_DNS_ZONE_NAME" "SERVICE_ACCOUNT_NAME" "SERVICE_NAME" "DOMAIN_NAME")
 
 # Set Path
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+SCRIPT_DIR="$(realpath $(dirname $0))"
 
-# Validate environment variables or exit
-source "$SCRIPT_DIR/common.sh"
+# Export all functions
+source "$SCRIPT_DIR/functions.sh"
+
+# Check and Set environment variables
+check_required_vars "${required_vars[@]}"
+read_env
+
 
 # Section 1: Setup gcloud CLI using Service Account Key
 show_section_header "Setting up gcloud CLI permissions using Service Account..."
@@ -32,38 +27,29 @@ if [ $? -ne 0 ]; then
 fi
 print_success "Configure gcloud CLI with Service Account" "Success"
 
-# Get Project Number
-show_loading "Get GCP Project number"
-PROJECT_NUMBER=$(gcloud projects describe $GCP_PROJECT_ID --format="value(projectNumber)")
-if [ $? -ne 0 ]; then
-  print_error "Retrieving project number" "Failed"
-  exit 1
-fi
-print_success "Project number: $PROJECT_NUMBER" "Retrieved"
-
 
 # Section 2: Setup IP, DNS, SSL Certificate
 show_section_header "Setup IP and DNS..."
 show_loading "Reserving global static external IP..."
 echo "Reserving global static external IP address for Loadbalancer..."
-if ! gcloud compute addresses describe $SERVICE_NAME-$PROJECT_NUMBER-ip --global > /dev/null 2>&1; then
-    gcloud compute addresses create $SERVICE_NAME-$PROJECT_NUMBER-ip \
+if ! gcloud compute addresses describe $SERVICE_NAME-ip --global > /dev/null 2>&1; then
+    gcloud compute addresses create $SERVICE_NAME-ip \
         --network-tier=PREMIUM \
         --ip-version=IPV4 \
         --global
     if [ $? -ne 0 ]; then
-        print_error "$SERVICE_NAME-$PROJECT_NUMBER-ip IP creation" "Failed"
+        print_error "$SERVICE_NAME-ip IP creation" "Failed"
         exit 1
     else
-        print_success "$SERVICE_NAME-$PROJECT_NUMBER-ip IP" "Created"
+        print_success "$SERVICE_NAME-ip IP" "Created"
     fi
 else
-    print_warning "$SERVICE_NAME-$PROJECT_NUMBER-ip IP already exists" "Skipped"
+    print_warning "$SERVICE_NAME-ip IP already exists" "Skipped"
 fi
 
 # Set the IP address as environment variable
 show_loading "Fetching static IP address..."
-STATIC_IP=$(gcloud compute addresses describe $SERVICE_NAME-$PROJECT_NUMBER-ip \
+STATIC_IP=$(gcloud compute addresses describe $SERVICE_NAME-ip \
     --format="get(address)" \
     --global 2>/dev/null)
 echo "Static IP: $STATIC_IP"
@@ -103,19 +89,19 @@ fi
 
 # Create SSL Certificate for Loadbalancer
 show_loading "Creating SSL certificate..."
-if ! gcloud compute ssl-certificates describe $SERVICE_NAME-$PROJECT_NUMBER-ssl --global > /dev/null 2>&1; then
-    gcloud compute ssl-certificates create $SERVICE_NAME-$PROJECT_NUMBER-ssl \
+if ! gcloud compute ssl-certificates describe $SERVICE_NAME-ssl --global > /dev/null 2>&1; then
+    gcloud compute ssl-certificates create $SERVICE_NAME-ssl \
         --description="SSL Certificate for Loadbalancer" \
         --domains=$DOMAIN_NAME \
         --global
     if [ $? -ne 0 ]; then
-        print_error "$SERVICE_NAME-$PROJECT_NUMBER-ssl certificate creation" "Failed"
+        print_error "$SERVICE_NAME-ssl certificate creation" "Failed"
         exit 1
     else
-        print_success "$SERVICE_NAME-$PROJECT_NUMBER-ssl certificate" "Created"
+        print_success "$SERVICE_NAME-ssl certificate" "Created"
     fi
 else
-    print_warning "$SERVICE_NAME-$PROJECT_NUMBER-ssl certificate already exists" "Skipped"
+    print_warning "$SERVICE_NAME-ssl certificate already exists" "Skipped"
 fi
 
 
@@ -123,51 +109,51 @@ fi
 # Create a serverless NEG
 show_section_header "Setup Backend services..."
 show_loading "Creating serverless NEG..."
-if ! gcloud compute network-endpoint-groups describe $SERVICE_NAME-$PROJECT_NUMBER-neg --region=$GCP_REGION > /dev/null 2>&1; then
-    gcloud compute network-endpoint-groups create $SERVICE_NAME-$PROJECT_NUMBER-neg \
+if ! gcloud compute network-endpoint-groups describe $SERVICE_NAME-neg --region=$GCP_REGION > /dev/null 2>&1; then
+    gcloud compute network-endpoint-groups create $SERVICE_NAME-neg \
         --region=$GCP_REGION \
         --network-endpoint-type=serverless  \
         --cloud-run-service=$SERVICE_NAME
     if [ $? -ne 0 ]; then
-        print_error "$SERVICE_NAME-$PROJECT_NUMBER-neg NEG creation" "Failed"
+        print_error "$SERVICE_NAME-neg NEG creation" "Failed"
         exit 1
     else
-        print_success "$SERVICE_NAME-$PROJECT_NUMBER-neg NEG" "Created"
+        print_success "$SERVICE_NAME-neg NEG" "Created"
     fi
 else
-    print_warning "$SERVICE_NAME-$PROJECT_NUMBER-neg NEG already exists" "Skipped"
+    print_warning "$SERVICE_NAME-neg NEG already exists" "Skipped"
 fi
 
 # Create a backend service
 show_loading "Creating a Backend Service..."
-if ! gcloud compute backend-services describe $SERVICE_NAME-$PROJECT_NUMBER-bs --global > /dev/null 2>&1; then
-    gcloud compute backend-services create $SERVICE_NAME-$PROJECT_NUMBER-bs \
+if ! gcloud compute backend-services describe $SERVICE_NAME-bs --global > /dev/null 2>&1; then
+    gcloud compute backend-services create $SERVICE_NAME-bs \
         --load-balancing-scheme=EXTERNAL_MANAGED \
         --global
     if [ $? -ne 0 ]; then
-        print_error "$SERVICE_NAME-$PROJECT_NUMBER-bs backend service creation" "Failed"
+        print_error "$SERVICE_NAME-bs backend service creation" "Failed"
         exit 1
     else
-        print_success "$SERVICE_NAME-$PROJECT_NUMBER-bs backend service" "Created"
+        print_success "$SERVICE_NAME-bs backend service" "Created"
         # Add serverless NEG to the backend service
         show_loading "Adding serverless NEG to the backend service..."
-        if [[ $(gcloud compute backend-services list --filter="name:( $SERVICE_NAME-$PROJECT_NUMBER-bs )" --global) == Listed* ]] then
-            gcloud compute backend-services add-backend $SERVICE_NAME-$PROJECT_NUMBER-bs \
+        if [[ $(gcloud compute backend-services list --filter="name:( $SERVICE_NAME-bs )" --global) == Listed* ]]; then
+            gcloud compute backend-services add-backend $SERVICE_NAME-bs \
                 --global \
-                --network-endpoint-group=$SERVICE_NAME-$PROJECT_NUMBER-neg \
+                --network-endpoint-group=$SERVICE_NAME-neg \
                 --network-endpoint-group-region=$GCP_REGION
             if [ $? -ne 0 ]; then
-                print_error "Adding $SERVICE_NAME-$PROJECT_NUMBER-neg to backend service" "Failed"
+                print_error "Adding $SERVICE_NAME-neg to backend service" "Failed"
                 exit 1
             else
-                print_success "Adding $SERVICE_NAME-$PROJECT_NUMBER-neg to backend service" "Success"
+                print_success "Adding $SERVICE_NAME-neg to backend service" "Success"
             fi
         else
-            print_warning "$SERVICE_NAME-$PROJECT_NUMBER-neg already added" "Skipped"
+            print_warning "$SERVICE_NAME-neg already added" "Skipped"
         fi
     fi
 else
-    print_warning "$SERVICE_NAME-$PROJECT_NUMBER-bs backend service already exists" "Skipped"
+    print_warning "$SERVICE_NAME-bs backend service already exists" "Skipped"
 fi
 
 
@@ -175,18 +161,18 @@ fi
 # Create a URL map to route incoming requests to the backend service
 show_section_header "Setup URL map..."
 show_loading "Creating default URL map..."
-if ! gcloud compute url-maps describe $SERVICE_NAME-$PROJECT_NUMBER-url-map > /dev/null 2>&1; then
-gcloud compute url-maps create $SERVICE_NAME-$PROJECT_NUMBER-url-map \
-    --default-service $SERVICE_NAME-$PROJECT_NUMBER-bs \
+if ! gcloud compute url-maps describe $SERVICE_NAME-url-map > /dev/null 2>&1; then
+gcloud compute url-maps create $SERVICE_NAME-url-map \
+    --default-service $SERVICE_NAME-bs \
     --global
     if [ $? -ne 0 ]; then
-        print_error "$SERVICE_NAME-$PROJECT_NUMBER-url-map URL map creation" "Failed"
+        print_error "$SERVICE_NAME-url-map URL map creation" "Failed"
         exit 1
     else
-        print_success "$SERVICE_NAME-$PROJECT_NUMBER-url-map URL map" "Created"
+        print_success "$SERVICE_NAME-url-map URL map" "Created"
     fi
 else
-    print_warning "$SERVICE_NAME-$PROJECT_NUMBER-url-map URL map already exists" "Skipped"
+    print_warning "$SERVICE_NAME-url-map URL map already exists" "Skipped"
 fi
 
 # Create a URL map to redirect HTTP to HTTPS
@@ -210,8 +196,8 @@ fi
 # Create HTTP target proxy
 show_section_header "Setup Target Proxy..."
 show_loading "Creating HTTP target proxy..."
-if ! gcloud compute target-http-proxies describe $SERVICE_NAME-$PROJECT_NUMBER-http-proxy > /dev/null 2>&1; then
-    gcloud compute target-http-proxies create $SERVICE_NAME-$PROJECT_NUMBER-http-proxy \
+if ! gcloud compute target-http-proxies describe $SERVICE_NAME-http-proxy > /dev/null 2>&1; then
+    gcloud compute target-http-proxies create $SERVICE_NAME-http-proxy \
         --url-map=http-to-https-redirect \
         --global
     if [ $? -ne 0 ]; then
@@ -226,10 +212,10 @@ fi
 
 # Create HTTPS target proxy
 show_loading "Creating HTTPS target proxy..."
-if ! gcloud compute target-https-proxies describe $SERVICE_NAME-$PROJECT_NUMBER-https-proxy > /dev/null 2>&1; then
-    gcloud compute target-https-proxies create $SERVICE_NAME-$PROJECT_NUMBER-https-proxy \
-        --ssl-certificates=$SERVICE_NAME-$PROJECT_NUMBER-ssl \
-        --url-map=$SERVICE_NAME-$PROJECT_NUMBER-url-map \
+if ! gcloud compute target-https-proxies describe $SERVICE_NAME-https-proxy > /dev/null 2>&1; then
+    gcloud compute target-https-proxies create $SERVICE_NAME-https-proxy \
+        --ssl-certificates=$SERVICE_NAME-ssl \
+        --url-map=$SERVICE_NAME-url-map \
         --global
     if [ $? -ne 0 ]; then
         print_error "http-to-https-redirect URL map creation" "Failed"
@@ -246,42 +232,42 @@ fi
 # Create HTTP load balancer
 show_section_header "Setup Forwarding Rules..."
 show_loading "Creating HTTP load balancer..."
-if ! gcloud compute forwarding-rules describe $SERVICE_NAME-$PROJECT_NUMBER-http-lb --global > /dev/null 2>&1; then
-    gcloud compute forwarding-rules create $SERVICE_NAME-$PROJECT_NUMBER-http-lb \
+if ! gcloud compute forwarding-rules describe $SERVICE_NAME-http-lb --global > /dev/null 2>&1; then
+    gcloud compute forwarding-rules create $SERVICE_NAME-http-lb \
         --load-balancing-scheme=EXTERNAL_MANAGED \
         --network-tier=PREMIUM \
-        --address=$SERVICE_NAME-$PROJECT_NUMBER-ip \
-        --target-http-proxy=$SERVICE_NAME-$PROJECT_NUMBER-http-proxy \
+        --address=$SERVICE_NAME-ip \
+        --target-http-proxy=$SERVICE_NAME-http-proxy \
         --global \
         --ports=80
     if [ $? -ne 0 ]; then
-        print_error "$SERVICE_NAME-$PROJECT_NUMBER-http-lb forwarding rule creation" "Failed"
+        print_error "$SERVICE_NAME-http-lb forwarding rule creation" "Failed"
         exit 1
     else
-        print_success "$SERVICE_NAME-$PROJECT_NUMBER-http-lb"forwarding rule  "Created"
+        print_success "$SERVICE_NAME-http-lb"forwarding rule  "Created"
     fi
 else
-    print_warning "$SERVICE_NAME-$PROJECT_NUMBER-http-lb forwarding rule already exists" "Skipped"
+    print_warning "$SERVICE_NAME-http-lb forwarding rule already exists" "Skipped"
 fi
 
 # Create HTTPS load balancer
 show_loading "Creating HTTPS load balancer..."
-if ! gcloud compute forwarding-rules describe $SERVICE_NAME-$PROJECT_NUMBER-https-lb --global  > /dev/null 2>&1; then
-    gcloud compute forwarding-rules create $SERVICE_NAME-$PROJECT_NUMBER-https-lb \
+if ! gcloud compute forwarding-rules describe $SERVICE_NAME-https-lb --global  > /dev/null 2>&1; then
+    gcloud compute forwarding-rules create $SERVICE_NAME-https-lb \
         --load-balancing-scheme=EXTERNAL_MANAGED \
         --network-tier=PREMIUM \
-        --address=$SERVICE_NAME-$PROJECT_NUMBER-ip \
-        --target-https-proxy=$SERVICE_NAME-$PROJECT_NUMBER-https-proxy \
+        --address=$SERVICE_NAME-ip \
+        --target-https-proxy=$SERVICE_NAME-https-proxy \
         --global \
         --ports=443
     if [ $? -ne 0 ]; then
-        print_error "$SERVICE_NAME-$PROJECT_NUMBER-https-lb Forwarding rule creation" "Failed"
+        print_error "$SERVICE_NAME-https-lb Forwarding rule creation" "Failed"
         exit 1
     else
-        print_success "$SERVICE_NAME-$PROJECT_NUMBER-https-lb Forwarding rule" "Created"
+        print_success "$SERVICE_NAME-https-lb Forwarding rule" "Created"
     fi
 else
-    print_warning "$SERVICE_NAME-$PROJECT_NUMBER-https-lb Forwarding rule already exists" "Skipped"
+    print_warning "$SERVICE_NAME-https-lb Forwarding rule already exists" "Skipped"
 fi
 
 

@@ -1,3 +1,52 @@
+# Set this globally here
+PARENT_DIR="$(dirname "$SCRIPT_DIR")"
+
+# Function to load .env
+read_env() {
+  local filePath="$PARENT_DIR/.env"
+
+  if [ ! -f "$filePath" ]; then
+    echo "missing ${filePath}"
+    exit 1
+  fi
+
+  echo "Reading $filePath"
+  while read -r LINE; do
+    # Remove leading and trailing whitespaces, and carriage return
+    CLEANED_LINE=$(echo "$LINE" | awk '{$1=$1};1' | tr -d '\r')
+
+    if [[ $CLEANED_LINE != '#'* ]] && [[ $CLEANED_LINE == *'='* ]]; then
+      export "$CLEANED_LINE"
+    fi
+  done < "$filePath"
+}
+
+# Function to check if all required environment variables is set
+check_required_vars() {
+  local required_vars=("$@")
+  local all_vars_set=true
+
+  # Function to check if a variable is set in the .env file
+  is_var_set() {
+    grep -q "^$1=" "$PARENT_DIR/.env"
+  }
+
+  # Iterate over required variables and check if they are set
+  for var in "${required_vars[@]}"; do
+    if ! is_var_set "$var"; then
+      echo "Error: Variable '$var' is not set in .env file."
+      all_vars_set=false
+    fi
+  done
+
+  # Check if all variables were found
+  if $all_vars_set; then
+    echo "All required variables are set in the .env file."
+  else
+    exit 1  # Exit with an error code if any variable is missing
+  fi
+}
+
 # Function to print error message
 print_error() {
     local item="$1"    # Item name, e.g., API name
