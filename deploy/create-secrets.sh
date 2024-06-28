@@ -1,60 +1,39 @@
 #!/bin/bash
 
-# Check if the .env file path is provided
-if [ -z "$1" ]; then
-  echo "Usage: $0 /path/to/.env"
+# Define required environment variables for this script
+required_vars=("GCP_PROJECT_ID" "GCP_REGION" "GCP_DOCKER_REPO_ZONE" "GCP_SERVICE_NAME" "SERVICE_NAME")
+
+# Set Path
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
+# Validate environment variables or exit
+source "$SCRIPT_DIR/common.sh"
+
+# Section 1: Setup gcloud CLI using Service Account Key
+show_section_header "Setting up gcloud CLI permissions using Service Account..."
+show_loading "Configuring gcloud CLI with Service Account"
+gcloud auth activate-service-account $GCP_SERVICE_NAME@$GCP_PROJECT_ID.iam.gserviceaccount.com \
+    --key-file=$GCP_SA_KEY_PATH \
+    --project=$GCP_PROJECT_ID
+
+if [ $? -ne 0 ]; then
+    print_error "Configure gcloud CLI with Service Account" "Failed"
+    exit 1
+fi
+print_success "Configure gcloud CLI with Service Account" "Success"
+
+# Get Project Number
+show_loading "Get GCP Project number"
+PROJECT_NUMBER=$(gcloud projects describe $GCP_PROJECT_ID --format="value(projectNumber)")
+if [ $? -ne 0 ]; then
+  print_error "Retrieving project number" "Failed"
   exit 1
 fi
+print_success "Project number: $PROJECT_NUMBER" "Retrieved"
 
-ENV_FILE=$1
-
-# Check if the .env file exists
-if [ ! -f "$ENV_FILE" ]; then
-  echo ".env file not found at $ENV_FILE"
-  exit 1
-fi
-
-# Read each line from the .env file
-while IFS= read -r line || [[ -n "$line" ]]; do
-  # Skip empty lines and lines starting with a comment
-  if [[ -z "$line" || "$line" =~ ^\s*# ]]; then
-    continue
-  fi
-
-  # Extract the key and value, stripping comments
-  key=$(echo "$line" | cut -d '=' -f 1)
-  value=$(echo "$line" | cut -d '=' -f 2- | cut -d '#' -f 1 | sed 's/[[:space:]]*$//')
-
-    # Remove = followed by a space and a double quote
-  value=$(echo "$value" | sed 's/=\s*"//g')
-
-  # Remove = followed by a space and a single quote
-  value=$(echo "$value" | sed "s/=\s*'//g")
-
-  # Remove a double quote at the end
-  value=$(echo "$value" | sed 's/"$//')
-
-  # Remove a single quote at the end
-  value=$(echo "$value" | sed "s/'$//")
-
-
-
-  # Create or update the secret in GCP Secret Manager
-  echo "Processing secret for $key..."
-
-  # Check if the secret exists
-  secret_exists=$(gcloud secrets list --filter="name:$key" --format="value(name)")
-
-  if [ -z "$secret_exists" ]; then
-    # Create the secret if it does not exist
-    echo "Creating secret for $key..."
-    echo "$value" | gcloud secrets create "$key" --data-file=-
-  else
-    # Overwrite the secret if it already exists
-    echo "Updating secret for $key with $value"
-    echo "$value" | gcloud secrets versions add "$key" --data-file=-
-  fi
-
-done < "$ENV_FILE"
-
-echo "All secrets imported."
+# Create secret in Secret Manager
+show_section_header "Create secrets for Application..."
+create_secret "MYSQL_HOST" "/cloudsql/$GCP_MYSQL_PROJECT_ID:$MYSQL_REGION:$MYSQL_INSTANCE"
+create_secret "MYSQL_DATABASE" "$MYSQL_DATABASE"
+create_secret "MYSQL_USER" "$MYSQL_USER"
+create_secret "MYSQL_PASSWORD" "$MYSQL_PASSWORD"
