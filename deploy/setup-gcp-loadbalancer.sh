@@ -11,7 +11,7 @@
 # Documentation : https://cloud.google.com/sdk/docs/authorizing
 
 # Define required environment variables for this script
-required_vars=("GCP_PROJECT_ID" "GCP_REGION" "GCP_DNS_ZONE_NAME" "GCP_SERVICE_NAME" "SERVICE_NAME" "DOMAIN_NAME")
+required_vars=("GCP_PROJECT_ID" "GCP_REGION" "GCP_DNS_ZONE_NAME" "GCP_SERVICE_NAME" "DOMAIN_NAME")
 
 # Set Path
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"

@@ -5,7 +5,7 @@
 # Before running this script
 
 # Define required environment variables for this script
-required_vars=("GCP_PROJECT_ID" "GCP_REGION" "GCP_DOCKER_REPO_ZONE" "GCP_DNS_ZONE_NAME" "GCP_BUCKET_API_ZONE" "GCP_BUCKET_API_NAME" "GCP_SERVICE_NAME" "MYSQL_PASSWORD" "MYSQL_DATABASE" "MYSQL_USER" "MYSQL_HOST" "MYSQL_INSTANCE" "MYSQL_ZONE")
+required_vars=("GCP_PROJECT_ID" "GCP_REGION" "GCP_DOCKER_REPO_ZONE" "GCP_DOCKER_REPO_NAME" "GCP_DNS_ZONE_NAME" "GCP_BUCKET_API_ZONE" "GCP_BUCKET_API_NAME" "GCP_SERVICE_NAME")
 
 # Set Path
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -52,24 +52,13 @@ for api in "${apis[@]}"; do
 done
 echo
 
-# Get Project Number
-show_loading "Get GCP Project number"
-PROJECT_NUMBER=$(gcloud projects describe $GCP_PROJECT_ID --format="value(projectNumber)")
-if [ $? -ne 0 ]; then
-  print_error "Retrieving project number" "Failed"
-  exit 1
-fi
-print_success "Project number: $PROJECT_NUMBER" "Retrieved"
-
-
 # Section 3: Create an Artifact Registry repository
 show_section_header "Creating Artifact Registry repository..."
 show_loading "Creating repository"
-if ! gcloud artifacts repositories describe
- --location=$GCP_DOCKER_REPO_ZONE > /dev/null 2>&1; then
+if ! gcloud artifacts repositories describe $GCP_DOCKER_REPO_NAME --location=$GCP_DOCKER_REPO_ZONE > /dev/null 2>&1; then
     gcloud artifacts repositories create $GCP_DOCKER_REPO_NAME \
         --repository-format=docker \
-        --location=$GCP_DOCKER_REPO_ZONE \
+        --location="$GCP_DOCKER_REPO_ZONE" \
         --description="DESCRIPTION" \
         --async
     if [ $? -ne 0 ]; then
@@ -82,10 +71,6 @@ else
     print_warning "$GCP_DOCKER_REPO_NAME repository already exists" "Skipped"
 fi
 
-
-
-PROJECT_IDS=$(gcloud projects list --format="value(projectId)")
-show_section_header "Search all projects for SQL instance $MYSQL_INSTANCE..."
 
 # Section 4: GCS Bucket Creation
 show_section_header "Creating Cloud Storage bucket..."

@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Define required environment variables for this script
-required_vars=("GCP_PROJECT_ID" "GCP_REGION" "GCP_DOCKER_REPO_ZONE" "GCP_SERVICE_NAME" "SERVICE_NAME")
+required_vars=("GCP_PROJECT_ID" "GCP_REGION" "GCP_SERVICE_NAME")
 
 # Set Path
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -22,18 +22,51 @@ if [ $? -ne 0 ]; then
 fi
 print_success "Configure gcloud CLI with Service Account" "Success"
 
-# Get Project Number
-show_loading "Get GCP Project number"
-PROJECT_NUMBER=$(gcloud projects describe $GCP_PROJECT_ID --format="value(projectNumber)")
-if [ $? -ne 0 ]; then
-  print_error "Retrieving project number" "Failed"
-  exit 1
-fi
-print_success "Project number: $PROJECT_NUMBER" "Retrieved"
-
 # Create secret in Secret Manager
 show_section_header "Create secrets for Application..."
-create_secret "MYSQL_HOST" "/cloudsql/$GCP_MYSQL_PROJECT_ID:$MYSQL_REGION:$MYSQL_INSTANCE"
-create_secret "MYSQL_DATABASE" "$MYSQL_DATABASE"
-create_secret "MYSQL_USER" "$MYSQL_USER"
-create_secret "MYSQL_PASSWORD" "$MYSQL_PASSWORD"
+
+
+variable_names=("GCP_PROJECT_ID" \
+ "GCP_REGION" \
+\
+ "GCP_DOCKER_REPO_ZONE" \
+ "GCP_DOCKER_REPO_NAME" \
+\
+ "GCP_DNS_ZONE_NAME" \
+ "DOMAIN_NAME" \
+\
+ "GCP_BUCKET_API_ZONE" \
+ "GCP_BUCKET_API_NAME" \
+ "GCP_BUCKET_APP_ZONE" \
+ "GCP_BUCKET_APP_NAME" \
+\
+ "GCP_SERVICE_NAME" \
+\
+ "MYSQL_DATABASE" \
+ "MYSQL_USER" \
+ "MYSQL_PASSWORD" \
+ "GCP_MYSQL_HOST" \
+ "GCP_MYSQL_INSTANCE" \
+ "GCP_MYSQL_ZONE" \
+
+ "DJANGO_SECRET_KEY" \
+ "DJANGO_SUPERUSER_USERNAME" \
+ "DJANGO_SUPERUSER_PASSWORD" \
+ "DJANGO_SUPERUSER_EMAIL" \
+ "DJANGO_ALLOWED_HOSTS" \
+ "DJANGO_CSRF_TRUSTED_ORIGINS" \
+
+ "SMTP_PASSWORD" \
+ "SMTP_EMAIL_ADDRESS" \
+
+ "GOOGLE_OAUTH_SECRET" \
+ "GOOGLE_OAUTH_CLIENT_ID"
+ )
+
+for var_name in "${variable_names[@]}"; do
+    # Get the value of the variable (replace with your actual value retrieval method)
+    var_value="${!var_name}"
+
+    # Call the function to create secret
+    create_secret "$var_name" "$var_value"
+done
