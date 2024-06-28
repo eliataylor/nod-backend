@@ -5,7 +5,7 @@
 # Before running this script
 
 # Define required environment variables for this script
-required_vars=("GCP_PROJECT_ID" "GCP_REGION" "GCP_DOCKER_REPO_ZONE" "GCP_DNS_ZONE_NAME" "GCP_BUCKET_API_ZONE" "GCP_BUCKET_API_NAME" "GCP_SERVICE_NAME" "MYSQL_PASSWORD" "MYSQL_DATABASE" "MYSQL_USER" "MYSQL_HOST" "MYSQL_INSTANCE" "MYSQL_ZONE")
+required_vars=("GCP_PROJECT_ID" "GCP_REGION" "GCP_DOCKER_REPO_ZONE" "GCP_DNS_ZONE_NAME" "GCP_BUCKET_API_ZONE" "GCP_BUCKET_API_NAME" "GCP_SERVICE_NAME" "MYSQL_PASSWORD" "MYSQL_DATABASE" "MYSQL_USER" "MYSQL_HOST" "GCP_MYSQL_INSTANCE" "GCP_MYSQL_ZONE")
 
 # Set Path
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -36,34 +36,28 @@ fi
 print_success "Configure gcloud CLI with Service Account" "Success"
 
 PROJECT_IDS=$(gcloud projects list --format="value(projectId)")
-show_section_header "Search all projects for SQL instance $MYSQL_INSTANCE... across $PROJECT_IDS"
+show_section_header "Search all projects for SQL instance $GCP_MYSQL_INSTANCE... across $PROJECT_IDS"
 
-INSTANCE_EXISTS=false
-for PROJECT_ID in $PROJECT_IDS; do
-    if gcloud sql instances describe $MYSQL_INSTANCE --project=$PROJECT_ID --format="json(name)" > /dev/null 2>&1; then
-        print_success "\nSQL instance $MYSQL_INSTANCE exists in project $PROJECT_ID"
-        INSTANCE_EXISTS=true
-        break
-    else
-      print_warning "$PROJECT_ID does not have SQL instance $MYSQL_INSTANCE"
-    fi
-done
-
-if [ "$INSTANCE_EXISTS" = false ]; then
-    show_section_header "Creating Cloud SQL for MySQL instance $MYSQL_INSTANCE..."
-    gcloud sql instances create $MYSQL_INSTANCE \
+if gcloud sql instances describe $GCP_MYSQL_INSTANCE --project=$GCP_MYSQL_PROJECT_ID --format="json(name)" > /dev/null 2>&1; then
+    print_success "\nSQL instance $GCP_MYSQL_INSTANCE exists in project GCP_MYSQL_PROJECT_ID"
+  else
+    show_section_header "Creating Cloud SQL for MySQL instance $GCP_MYSQL_INSTANCE..."
+    gcloud sql instances create $GCP_MYSQL_INSTANCE \
         --database-version=MYSQL_8_0 \
         --tier=db-f1-micro \
         --region=$MYSQL_REGION \
         --availability-type=ZONAL
+
+    print_warning "UPDATE YOUR ENV: GCP_MYSQL_PROJECT_ID=$GCP_PROJECT_ID"
+    GCP_MYSQL_PROJECT_ID=$GCP_PROJECT_ID
+
     if [ $? -ne 0 ]; then
-        print_error "mysql $MYSQL_INSTANCE instance creation" "Failed"
+        print_error "mysql $GCP_MYSQL_INSTANCE instance creation" "Failed"
     else
-        print_success "mysql $MYSQL_INSTANCE instance" "Created"
+        print_success "mysql $GCP_MYSQL_INSTANCE instance" "Created"
     fi
-else
-    print_warning "mysql $MYSQL_INSTANCE instance already exists" "Skipped"
 fi
+
 
 # Section 5: Cloud SQL for MySQL instance creation
 echo -e "\nGoogle Cloud environment setup completed successfully.\n"
@@ -75,9 +69,9 @@ echo -e "\nGoogle Cloud environment setup completed successfully.\n"
 # Setup MySQL databsase
 show_section_header "Setup Cloud SQL for MySQL database..."
 show_loading "Creating MySQL database..."
-if ! gcloud sql databases describe $MYSQL_DATABASE --instance=$MYSQL_INSTANCE > /dev/null 2>&1; then
+if ! gcloud sql databases describe $MYSQL_DATABASE --instance=$GCP_MYSQL_INSTANCE > /dev/null 2>&1; then
     gcloud sql databases create $MYSQL_DATABASE \
-        --instance=$MYSQL_INSTANCE
+        --instance=$GCP_MYSQL_INSTANCE
     if [ $? -ne 0 ]; then
         print_error "$MYSQL_DATABASE database creation" "Failed"
     else
@@ -85,12 +79,12 @@ if ! gcloud sql databases describe $MYSQL_DATABASE --instance=$MYSQL_INSTANCE > 
         show_loading "Creating root password..."
         gcloud sql users set-password root \
             --host=% \
-            --instance=$MYSQL_INSTANCE \
+            --instance=$GCP_MYSQL_INSTANCE \
             --password=$MYSQL_ROOT_PASSWORD
         if [ $? -ne 0 ]; then
-            print_error "$MYSQL_INSTANCE set root password" "Failed"
+            print_error "$GCP_MYSQL_INSTANCE set root password" "Failed"
         else
-            print_success "$MYSQL_INSTANCE set root password" "Success"
+            print_success "$GCP_MYSQL_INSTANCE set root password" "Success"
         fi
     fi
 else
@@ -99,10 +93,10 @@ fi
 
 # Setup MySQL user
 show_loading "Creating MySQL user..."
-if gcloud sql databases describe $MYSQL_DATABASE --instance=$MYSQL_INSTANCE && ! gcloud sql users describe $MYSQL_USER --instance=$MYSQL_INSTANCE > /dev/null 2>&1; then
+if gcloud sql databases describe $MYSQL_DATABASE --instance=$GCP_MYSQL_INSTANCE && ! gcloud sql users describe $MYSQL_USER --instance=$GCP_MYSQL_INSTANCE > /dev/null 2>&1; then
     gcloud sql users create $MYSQL_USER \
         --host=% \
-        --instance=$MYSQL_INSTANCE \
+        --instance=$GCP_MYSQL_INSTANCE \
         --password=$MYSQL_PASSWORD
     if [ $? -ne 0 ]; then
         print_error "MySQL User creation" "Failed"

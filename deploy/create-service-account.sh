@@ -1,7 +1,5 @@
-#!/bin/bash
-
 # Define required environment variables for this script
-required_vars=("GCP_SERVICE_NAME" "GCP_PROJECT_ID", "GCP_SA_KEY_PATH", "DOMAIN_NAME")
+required_vars=("GCP_PROJECT_ID" "GCP_SERVICE_NAME")
 
 # Set Path
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -9,65 +7,93 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 # Validate environment variables or exit
 source "$SCRIPT_DIR/common.sh"
 
-# login manually
+# Authenticate with Google Cloud
+show_section_header "Setting up gcloud CLI permissions using your own account..."
+show_loading "Configuring gcloud CLI with your own account..."
 gcloud auth login
-
-
-# Set Default GCP Project
-gcloud config set project $GCP_PROJECT_ID
-
-
-# Create and Generate Service Account Key, save it as $GCP_SA_KEY_PATH with the following IAM Permissions:
-# Artifact Registry Administrator
-# Service Account User (roles/iam.serviceAccountUser)
-# Cloud Run Developer (roles/run.developer) on the Cloud Run service
-# Artifact Registry Administrator
-# Cloud Build Service Account
-# Cloud Run Admin
-# Secret Manager Secret Accessor (roles/secretmanager.secretAccessor)
-# Service Account User
-# Storage Object Creator
-# Storage Object Viewer
-
-
-ROLES=(
-    "roles/artifactregistry.admin"
-    "roles/iam.serviceAccountUser"
-    "roles/run.developer"
-    "roles/cloudbuild.builds.builder"
-    "roles/cloudsql.client"
-    "roles/run.admin"
-    "roles/secretmanager.secretAccessor"
-    "roles/storage.objectCreator"
-    "roles/storage.objectViewer"
-)
-
-# Create the service account
-SERVICE_ACCOUNT_EXISTS=$(gcloud iam service-accounts list --filter="email:$SERVICE_ACCOUNT_EMAIL" --format="value(email)")
-
-if [ -z "$SERVICE_ACCOUNT_EXISTS" ]; then
-    echo "Creating service account: $SERVICE_ACCOUNT_NAME"
-    gcloud iam service-accounts create "$SERVICE_ACCOUNT_ID" \
-        --description="Service account for $DOMAIN_NAME deployment to Cloud Run and accessing Cloud Storage" \
-        --display-name "$SERVICE_ACCOUNT_NAME"
+if [ $? -ne 0 ]; then
+    print_error "Configure gcloud CLI with Service Account" "Failed"
+    exit 1
 else
-    echo "Service account $SERVICE_ACCOUNT_NAME already exists."
+    print_success "Configure gcloud CLI with Service Account" "Success"
+fi
+
+show_loading "Setting GCP Project..."
+gcloud config set project $GCP_PROJECT_ID
+if [ $? -ne 0 ]; then
+    print_error "Setting GCP Project" "Failed"
+    exit 1
+else
+    print_success "Setting GCP Project" "Success"
+fi
+
+show_loading "Enable required IAM API..."
+gcloud services enable iam.googleapis.com
+if [ $? -ne 0 ]; then
+    print_error "Enabling IAM API" "Failed"
+    exit 1
+else
+    print_success "Enabling IAM API" "Success"
 fi
 
 
-for ROLE in "${ROLES[@]}"; do
-    gcloud projects add-iam-policy-binding "$GCP_PROJECT_ID" \
-        --member "serviceAccount:$SERVICE_ACCOUNT_ID@$GCP_PROJECT_ID.iam.gserviceaccount.com" \
-        --role "$ROLE"
+# Add necessary IAM permissions for service account
+show_section_header "Setup service account and permissions..."
+show_loading "Creating service account..."
+if ! gcloud iam service-accounts describe $GCP_SERVICE_NAME@$GCP_PROJECT_ID.iam.gserviceaccount.com > /dev/null 2>&1; then
+    gcloud iam service-accounts create $SERVICE_ACCOUNT_ID \
+    --description="Service account for automatic deployment to google cloud" \
+    --display-name="$GCP_SERVICE_NAME"
+    if [ $? -ne 0 ]; then
+        print_error "Service account creation" "Failed"
+    else
+        print_success "Service account creation" "Success"
+    fi
+else
+    print_warning "$GCP_SERVICE_NAME@$GCP_PROJECT_ID.iam.gserviceaccount.com already exists" "Skipped"
+fi
+
+show_loading "Add necessary IAM permissions for service account..."
+roles=(
+    "roles/viewer"
+    "roles/artifactregistry.admin"
+    "roles/cloudbuild.builds.builder"
+    "roles/run.admin"
+    "roles/cloudsql.admin"
+    "roles/compute.instanceAdmin.v1"
+    "roles/compute.networkAdmin"
+    "roles/compute.securityAdmin"
+    "roles/dns.admin"
+    "roles/secretmanager.admin"
+    "roles/iam.serviceAccountUser"
+    "roles/serviceusage.serviceUsageAdmin"
+    "roles/storage.admin"
+)
+for role in "${roles[@]}"; do
+    if [[ $(gcloud projects get-iam-policy $GCP_PROJECT_ID --flatten="bindings[].members" --format='table(bindings.role)' --filter="bindings.members:$GCP_SERVICE_NAME@$GCP_PROJECT_ID.iam.gserviceaccount.com AND bindings.role:$role") == ROLE* ]] then
+        print_warning "$role role already exists" "Skipped"
+    else
+        gcloud projects add-iam-policy-binding $GCP_PROJECT_ID \
+        --member="serviceAccount:$SERVICE_ACCOUNT_ID@$GCP_PROJECT_ID.iam.gserviceaccount.com" \
+        --role="$role" \
+        --quiet
+        if [ $? -ne 0 ]; then
+            print_error "$role added to Service Account" "Failed"
+        else
+            print_success "$role added to Service Account" "Success"
+        fi
+    fi
 done
 
 
-# CLOUD_RUN_SERVICE_NAME="my-cloud-run-service"
-# echo "Assigning Cloud Run Developer role to $CLOUD_RUN_SERVICE_NAME"
-# gcloud run services add-iam-policy-binding "$CLOUD_RUN_SERVICE_NAME" \
-#    --member "serviceAccount:$SERVICE_ACCOUNT_EMAIL" \
-#    --role "roles/run.developer"
-
 # Create and download the service account key
+show_loading "Create and download the service account key..."
+
 gcloud iam service-accounts keys create $GCP_SA_KEY_PATH \
-    --iam-account=$SERVICE_ACCOUNT_NAME@$GCP_PROJECT_ID.iam.gserviceaccount.com
+    --iam-account=$GCP_SERVICE_NAME@$GCP_PROJECT_ID.iam.gserviceaccount.com
+
+if [ $? -ne 0 ]; then
+    print_error "Service account key creation" "Failed"
+else
+    print_success "Service account key creation" "Success"
+fi

@@ -1,5 +1,6 @@
 #!/bin/bash
 
+source "$SCRIPT_DIR/functions.sh"
 
 # Find root .env
 ENV_FILE="$1"
