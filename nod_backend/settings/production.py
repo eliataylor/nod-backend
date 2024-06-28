@@ -1,6 +1,6 @@
 from .base import *
 
-DEBUG = True
+DEBUG = os.getenv('DJANGO_DEBUG', 'False')
 
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 SECRET_KEY = os.getenv("DJANGO_SECRET_KEY")

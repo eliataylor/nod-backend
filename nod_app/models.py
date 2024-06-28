@@ -92,6 +92,8 @@ class CustomerAdmin(admin.ModelAdmin):
 
 admin.site.register(Customer, CustomerAdmin)
 
+def upload_to(instance, filename):
+    return 'media/suppliers/{filename}'.format(filename=filename)
 
 class Supplier(SuperModel):
     class Meta:
@@ -99,7 +101,7 @@ class Supplier(SuperModel):
 
     id = models.SlugField(primary_key=True, unique=True, editable=False)
     name = models.CharField(max_length=255)
-    photo = models.ImageField(upload_to='media/suppliers', blank=True, null=True)
+    photo = models.ImageField(upload_to="media/suppliers", blank=True, null=True)
     address = AddressField(related_name='+', blank=True, null=True)
     website = models.URLField(blank=True, null=True)
 
