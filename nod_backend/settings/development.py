@@ -1,5 +1,7 @@
 from .base import *
 
+DEBUG = os.getenv('DJANGO_DEBUG', 'True')
+
 INSTALLED_APPS += [
     'django_extensions',  # Example of a dev-only app
 ]

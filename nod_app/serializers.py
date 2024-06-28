@@ -68,6 +68,8 @@ class CustomerSerializer(CustomSerializer):
         fields = '__all__'
 
 class SupplierSerializer(CustomSerializer):
+    photo = serializers.ImageField(required=False)
+
     class Meta:
         model = Supplier
         fields = '__all__'
