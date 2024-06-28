@@ -11,7 +11,7 @@
 # Documentation : https://cloud.google.com/sdk/docs/authorizing
 
 # Define required environment variables for this script
-required_vars=("GCP_PROJECT_ID" "GCP_REGION" "GCP_DNS_ZONE_NAME" "SERVICE_ACCOUNT_NAME" "SERVICE_NAME" "DOMAIN_NAME")
+required_vars=("GCP_PROJECT_ID" "GCP_REGION" "GCP_DNS_ZONE_NAME" "GCP_SERVICE_NAME" "SERVICE_NAME" "DOMAIN_NAME")
 
 # Set Path
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -22,8 +22,8 @@ source "$SCRIPT_DIR/common.sh"
 # Section 1: Setup gcloud CLI using Service Account Key
 show_section_header "Setting up gcloud CLI permissions using Service Account..."
 show_loading "Configuring gcloud CLI with Service Account"
-gcloud auth activate-service-account $SERVICE_ACCOUNT_NAME@$GCP_PROJECT_ID.iam.gserviceaccount.com \
-    --key-file="$SCRIPT_DIR/$SERVICE_ACCOUNT_NAME.json" \
+gcloud auth activate-service-account $GCP_SERVICE_NAME@$GCP_PROJECT_ID.iam.gserviceaccount.com \
+    --key-file=$GCP_SA_KEY_PATH \
     --project=$GCP_PROJECT_ID
 
 if [ $? -ne 0 ]; then
