@@ -60,7 +60,10 @@ variable_names=("GCP_PROJECT_ID" \
  "SMTP_EMAIL_ADDRESS" \
 
  "GOOGLE_OAUTH_SECRET" \
- "GOOGLE_OAUTH_CLIENT_ID"
+ "GOOGLE_OAUTH_CLIENT_ID" \
+ "FRONT_END_URL" \
+ "GOOGLE_CALLBACK_URL" \
+ "DEFAULT_FROM_EMAIL"
  )
 
 for var_name in "${variable_names[@]}"; do
