@@ -57,10 +57,10 @@ class Customer(User):
 	class Meta:
 		abstract = False
 
-	id = models.AutoField(primary_key=True)
+	#id = models.AutoField(primary_key=True)
 	user_id = models.ForeignKey(get_user_model(),  on_delete=models.CASCADE,  related_name='+', blank=True, null=True)
 	phone = models.CharField(validators=[validate_phone_number], max_length=16)
-	email = models.EmailField()
+	#email = models.EmailField()
 	billing_name = models.CharField(max_length=255, blank=True, null=True)
 	billing_address = AddressField(related_name='+', blank=True, null=True)
 	delivery_address = AddressField(related_name='+', blank=True, null=True)
