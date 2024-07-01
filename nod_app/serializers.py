@@ -1,16 +1,18 @@
 
 
+from django.core.exceptions import ObjectDoesNotExist
 ####OBJECT-ACTIONS-SERIALIZER-IMPORTS-STARTS####
 from rest_framework import serializers
-from django.core.exceptions import ObjectDoesNotExist
-from django.db.models import ManyToManyField
+
 from .models import Customer
-from .models import Supplier
 from .models import Ingredient
 from .models import Meal
-from .models import Plan
-from .models import OrderItem
 from .models import Order
+from .models import OrderItem
+from .models import Plan
+from .models import Supplier
+
+
 ####OBJECT-ACTIONS-SERIALIZER-IMPORTS-ENDS####
 
 
@@ -68,8 +70,6 @@ class CustomerSerializer(CustomSerializer):
         fields = '__all__'
 
 class SupplierSerializer(CustomSerializer):
-    photo = serializers.ImageField(required=False)
-
     class Meta:
         model = Supplier
         fields = '__all__'
@@ -100,6 +100,8 @@ class OrderSerializer(CustomSerializer):
         fields = '__all__'
 
 ####OBJECT-ACTIONS-SERIALIZERS-ENDS####
+
+
 
 
 
