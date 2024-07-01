@@ -1,26 +1,31 @@
 
 
-####OBJECT-ACTIONS-VIEWSET-IMPORTS-STARTS####
-from rest_framework import viewsets, permissions, status, pagination
-from rest_framework.response import Response
-from rest_framework.exceptions import ValidationError
+from django.core.management import call_command
+from django.http import JsonResponse
 from django.utils.decorators import method_decorator
 from django.views.decorators.cache import cache_page
+####OBJECT-ACTIONS-VIEWSET-IMPORTS-STARTS####
+from rest_framework import viewsets, permissions, status
 from rest_framework.decorators import action
+from rest_framework.exceptions import ValidationError
+from rest_framework.response import Response
+
 from .models import Customer
-from .serializers import CustomerSerializer
-from .models import Supplier
-from .serializers import SupplierSerializer
 from .models import Ingredient
-from .serializers import IngredientSerializer
 from .models import Meal
-from .serializers import MealSerializer
-from .models import Plan
-from .serializers import PlanSerializer
-from .models import OrderItem
-from .serializers import OrderItemSerializer
 from .models import Order
+from .models import OrderItem
+from .models import Plan
+from .models import Supplier
+from .serializers import CustomerSerializer
+from .serializers import IngredientSerializer
+from .serializers import MealSerializer
+from .serializers import OrderItemSerializer
 from .serializers import OrderSerializer
+from .serializers import PlanSerializer
+from .serializers import SupplierSerializer
+
+
 ####OBJECT-ACTIONS-VIEWSET-IMPORTS-ENDS####
 
 
@@ -42,6 +47,8 @@ class CustomerViewSet(viewsets.ModelViewSet):
         return Response(serializer.data)
 
     def create(self, request, *args, **kwargs):
+        if hasattr(self.serializer_class.Meta.model, 'author') and not request.data.get('author'):
+            request.data['author'] = self.serializer_class.Meta.model.get_current_user(request).id
         serializer = self.get_serializer(data=request.data)
         if not serializer.is_valid():
             raise ValidationError(serializer.errors)
@@ -110,6 +117,8 @@ class SupplierViewSet(viewsets.ModelViewSet):
         return Response(serializer.data)
 
     def create(self, request, *args, **kwargs):
+        if hasattr(self.serializer_class.Meta.model, 'author') and not request.data.get('author'):
+            request.data['author'] = self.serializer_class.Meta.model.get_current_user(request).id
         serializer = self.get_serializer(data=request.data)
         if not serializer.is_valid():
             raise ValidationError(serializer.errors)
@@ -178,6 +187,8 @@ class IngredientViewSet(viewsets.ModelViewSet):
         return Response(serializer.data)
 
     def create(self, request, *args, **kwargs):
+        if hasattr(self.serializer_class.Meta.model, 'author') and not request.data.get('author'):
+            request.data['author'] = self.serializer_class.Meta.model.get_current_user(request).id
         serializer = self.get_serializer(data=request.data)
         if not serializer.is_valid():
             raise ValidationError(serializer.errors)
@@ -246,6 +257,8 @@ class MealViewSet(viewsets.ModelViewSet):
         return Response(serializer.data)
 
     def create(self, request, *args, **kwargs):
+        if hasattr(self.serializer_class.Meta.model, 'author') and not request.data.get('author'):
+            request.data['author'] = self.serializer_class.Meta.model.get_current_user(request).id
         serializer = self.get_serializer(data=request.data)
         if not serializer.is_valid():
             raise ValidationError(serializer.errors)
@@ -314,6 +327,8 @@ class PlanViewSet(viewsets.ModelViewSet):
         return Response(serializer.data)
 
     def create(self, request, *args, **kwargs):
+        if hasattr(self.serializer_class.Meta.model, 'author') and not request.data.get('author'):
+            request.data['author'] = self.serializer_class.Meta.model.get_current_user(request).id
         serializer = self.get_serializer(data=request.data)
         if not serializer.is_valid():
             raise ValidationError(serializer.errors)
@@ -382,6 +397,8 @@ class OrderItemViewSet(viewsets.ModelViewSet):
         return Response(serializer.data)
 
     def create(self, request, *args, **kwargs):
+        if hasattr(self.serializer_class.Meta.model, 'author') and not request.data.get('author'):
+            request.data['author'] = self.serializer_class.Meta.model.get_current_user(request).id
         serializer = self.get_serializer(data=request.data)
         if not serializer.is_valid():
             raise ValidationError(serializer.errors)
@@ -450,6 +467,8 @@ class OrderViewSet(viewsets.ModelViewSet):
         return Response(serializer.data)
 
     def create(self, request, *args, **kwargs):
+        if hasattr(self.serializer_class.Meta.model, 'author') and not request.data.get('author'):
+            request.data['author'] = self.serializer_class.Meta.model.get_current_user(request).id
         serializer = self.get_serializer(data=request.data)
         if not serializer.is_valid():
             raise ValidationError(serializer.errors)
@@ -503,6 +522,28 @@ class OrderViewSet(viewsets.ModelViewSet):
 
 
 ####OBJECT-ACTIONS-VIEWSETS-ENDS####
+
+
+####OBJECT-ACTIONS-CORE-STARTS####
+def migrate(request):
+    call_command('migrate')
+    return JsonResponse({'status': 'migrations complete'})
+
+def collectstatic(request):
+    call_command('collectstatic', '--noinput')
+    return JsonResponse({'status': 'static files collected'})
+
+
+####OBJECT-ACTIONS-CORE-ENDS####
+
+
+
+
+
+
+
+
+
 
 
 

@@ -1,27 +1,34 @@
 from .base import *
 
-DEBUG = False
+DEBUG = os.getenv('DJANGO_DEBUG', 'False')
 
-STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+SECRET_KEY = os.getenv("DJANGO_SECRET_KEY")
+SECURE_SSL_REDIRECT = True
+SESSION_COOKIE_SECURE = True
+CSRF_COOKIE_SECURE = True
 
-# Heroku settings
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+# Set HSTS headers
+SECURE_HSTS_SECONDS = 31536000  # 1 year
+SECURE_HSTS_INCLUDE_SUBDOMAINS = True  # Apply HSTS to all subdomains
+SECURE_HSTS_PRELOAD = True  # Allow the site to be included in browsers' HSTS preload list
+SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
 
-MIDDLEWARE = [
-    'django.middleware.security.SecurityMiddleware',
-    'whitenoise.middleware.WhiteNoiseMiddleware',
-    ...
-]
+SESSION_COOKIE_SECURE = True
+CSRF_COOKIE_SECURE = True
+
+# Define static storage via django-storages[google]
+# Using default Cloud Run service account
+# GS_CREDENTIALS = os.getenv('GCP_SA_KEY')
+GS_PROJECT_ID = os.getenv('GCP_PROJECT_ID')
+GS_BUCKET_NAME = os.getenv('GCP_BUCKET_NAME')
+STATIC_URL = "/static/"
+DEFAULT_FILE_STORAGE = "storages.backends.gcloud.GoogleCloudStorage"
+STATICFILES_STORAGE = "storages.backends.gcloud.GoogleCloudStorage"
+GS_DEFAULT_ACL = "publicRead"
 
 
-DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
-AWS_ACCESS_KEY_ID = os.environ.get('AWS_ACCESS_KEY_ID')
-AWS_SECRET_ACCESS_KEY = os.environ.get('AWS_SECRET_ACCESS_KEY')
-AWS_STORAGE_BUCKET_NAME = os.environ.get('AWS_STORAGE_BUCKET_NAME')
-
-
-try:
-    from .local import *
-except ImportError:
-    pass
+SPECTACULAR_SETTINGS = {
+    "SERVE_PUBLIC" : False,
+    "SERVE_INCLUDE_SCHEMA" : False
+}

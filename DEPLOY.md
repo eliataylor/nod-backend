@@ -1,8 +1,6 @@
-## [Heroku](https://devcenter.heroku.com/articles/getting-started-with-python#set-up) from OSX:
-- brew tap heroku/brew && brew install heroku
-- heroku login
-- heroku create
-- heroku config:set DJANGO_ENV=production
-
 ## [Cloud Run]
+- python manage.py migrate --check
 - https://cloud.google.com/python/django/run#macos-64-bit
+
+gcloud config set project nourishment-on-demand
+gsutil mb gs://nod_django_prod
