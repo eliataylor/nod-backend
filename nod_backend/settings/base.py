@@ -44,8 +44,8 @@ INSTALLED_APPS = [
     'dj_rest_auth.registration',
     'drf_spectacular',
 
-    'nod_app',
-    'users'
+    'users',
+    'nod_app'
 ]
 
 
