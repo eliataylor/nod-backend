@@ -1,30 +1,27 @@
 #!/bin/bash
 
 # Define required environment variables for this script
-required_vars=("GCP_PROJECT_ID" "GCP_REGION" "GCP_SERVICE_NAME")
 
-# Set Path
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
-# Validate environment variables or exit
-source "$SCRIPT_DIR/common.sh"
+REQUIRED_VARS=("GCP_PROJECT_ID" "GCP_REGION" "GCP_SERVICE_NAME")
 
-# Section 1: Setup gcloud CLI using Service Account Key
-show_section_header "Setting up gcloud CLI permissions using Service Account..."
-show_loading "Configuring gcloud CLI with Service Account"
-gcloud auth activate-service-account $GCP_SERVICE_NAME@$GCP_PROJECT_ID.iam.gserviceaccount.com \
-    --key-file=$GCP_SA_KEY_PATH \
-    --project=$GCP_PROJECT_ID
+SCRIPT_DIR=$(dirname "$0")
+source "${SCRIPT_DIR}/common.sh"
 
+show_section_header "ADD SECRETS TO GCP: WARNING THIS DOES NOT WORK FOR variable values with spaces in them. even if quoted"
+login_service_account $GCP_SA_KEY_PATH $GCP_PROJECT_ID
+set_project $GCP_PROJECT_ID
+
+json_string=$(jq -r ${GCP_SA_KEY_PATH})
+printf json_string
+show_loading "Setting Service Agent key a string in Secrets Manager"
+create_secret "GCP_SA_KEY" "$json_string"
 if [ $? -ne 0 ]; then
-    print_error "Configure gcloud CLI with Service Account" "Failed"
+    print_error "GCP_SA_KEY failed to set!"
     exit 1
+else
+    print_success "GCP_SA_KEY set"
 fi
-print_success "Configure gcloud CLI with Service Account" "Success"
-
-# Create secret in Secret Manager
-show_section_header "Create secrets for Application..."
-
 
 variable_names=("GCP_PROJECT_ID" \
  "GCP_REGION" \
@@ -63,13 +60,34 @@ variable_names=("GCP_PROJECT_ID" \
  "GOOGLE_OAUTH_CLIENT_ID" \
  "FRONT_END_URL" \
  "GOOGLE_CALLBACK_URL" \
- "DEFAULT_FROM_EMAIL"
+ "DEFAULT_FROM_EMAIL" \
+
+ "APPLE_KEY_ID" \
+ "APPLE_TEAM_ID" \
+ "TWILIO_AUTH_ACCOUNT_SID" \
+ "TWILIO_AUTH_TOKEN"
  )
 
-for var_name in "${variable_names[@]}"; do
-    # Get the value of the variable (replace with your actual value retrieval method)
+secret_names=("MYSQL_PASSWORD" \
+ "DJANGO_SECRET_KEY" \
+ "DJANGO_SUPERUSER_PASSWORD" \
+ "SMTP_PASSWORD" \
+ "GOOGLE_OAUTH_SECRET" \
+ "APPLE_KEY" \
+ "APPLE_TEAM_ID" \
+ "TWILIO_AUTH_TOKEN" \
+ "SPOTIFY_SECRET"
+ )
+
+for var_name in "${secret_names[@]}"; do
     var_value="${!var_name}"
 
     # Call the function to create secret
     create_secret "$var_name" "$var_value"
+
+    if [ $? -ne 0 ]; then
+        print_error "$var_name" " failed to set!"
+    else
+        print_success "$var_name" " set"
+    fi
 done

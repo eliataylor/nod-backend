@@ -4,12 +4,20 @@ __pycache__/
 *$py.class
 .DS_Store
 
+mysql-user.ini
+mysql.ini
+*.sql
+
 private.txt
 keys/*
+
+media
+staticfiles
 
 .idea
 .venv
 .env
+.env.dev
 cloud-sql-proxy
 
 secrets.txt

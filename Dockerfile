@@ -1,46 +1,34 @@
-# syntax=docker/dockerfile:1
-
-# Stage 2: Build dependencies
-FROM python:3.9.18 AS builder
+# Use the official Python image as a parent image
+FROM python:3.12.2 AS builder
 
 WORKDIR /app
 
 # Install Python dependencies
 COPY requirements.txt .
+RUN pip install --upgrade pip
 RUN pip install --no-cache-dir -r requirements.txt
 
-
 # Stage 2: Runtime stage
-FROM python:3.9.18-slim AS runner
-
-# Prepare build dependencies
-COPY --from=builder /usr/local/lib/python3.9/site-packages /usr/local/lib/python3.9/site-packages
-COPY --from=builder /usr/local/bin/gunicorn /usr/local/bin/gunicorn
-RUN apt-get update && \
-    apt-get install -y --no-install-recommends libmariadb3 && \
-    apt-get clean && \
-    rm -rf /var/lib/apt/lists/*
+FROM python:3.12.2 AS runner
 
 # Set environment variables
-ENV DJANGO_SUPERUSER_USERNAME=admin \
-    DJANGO_SUPERUSER_PASSWORD=admin \
-    DJANGO_SUPERUSER_EMAIL=admin@example.com \
-    PYTHONDONTWRITEBYTECODE=1 \
-    PYTHONUNBUFFERED=1 \
-    PORT=8080
+ENV PYTHONUNBUFFERED=1
+
+
+# Install system dependencies
+COPY --from=builder /usr/local/lib/python3.12/site-packages /usr/local/lib/python3.12/site-packages
+COPY --from=builder /usr/local/bin/gunicorn /usr/local/bin/gunicorn
+RUN apt-get update && \
+    apt-get install -y gcc libmariadb3 pkg-config python3-dev libssl-dev && \
+    apt-get clean
 
 # Create and set the working directory
 WORKDIR /app
 
-# Copy the entrypoint script and application code to the working directory
-COPY entrypoint.sh /entrypoint.sh
+# Copy the rest of the application code into the container
 COPY . .
 
-# Ensure the entrypoint script is executable
-RUN chmod +x /entrypoint.sh
+EXPOSE 8080
 
-# Expose the port the app runs on
-EXPOSE 8000
-
-# Run the entrypoint script
-ENTRYPOINT ["/entrypoint.sh"]
+# Run the Django application
+CMD ["sh", "entrypoint.sh"]

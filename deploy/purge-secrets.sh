@@ -1,6 +1,12 @@
 #!/bin/bash
 
-# Get the list of all secrets
+REQUIRED_VARS=("GCP_SA_KEY_PATH" "GCP_REGION")
+
+SCRIPT_DIR=$(dirname "$0")
+source "${SCRIPT_DIR}/common.sh"
+
+login_service_account $GCP_SA_KEY_PATH $GCP_PROJECT_ID
+
 secrets=$(gcloud secrets list --format="value(name)")
 
 if [ -z "$secrets" ]; then

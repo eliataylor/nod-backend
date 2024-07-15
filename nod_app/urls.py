@@ -1,24 +1,21 @@
 ####OBJECT-ACTIONS-URL-IMPORTS-STARTS####
-from django.urls import include, path
 from rest_framework.routers import DefaultRouter
-
-from .views import CustomerViewSet
+from django.urls import include, path
+from .views import migrate, collectstatic
+from .views import UsersViewSet
+from .views import SupplierViewSet
 from .views import IngredientViewSet
 from .views import MealViewSet
+from .views import PlanViewSet
 from .views import OrderItemViewSet
 from .views import OrderViewSet
-from .views import PlanViewSet
-from .views import SupplierViewSet
-from .views import migrate, collectstatic
-
 ####OBJECT-ACTIONS-URL-IMPORTS-ENDS####
 
 
 
 ####OBJECT-ACTIONS-URLS-STARTS####
-
 router = DefaultRouter()
-router.register(r'api/customer', CustomerViewSet, basename='customer')
+router.register(r'api/users', UsersViewSet, basename='users')
 router.register(r'api/supplier', SupplierViewSet, basename='supplier')
 router.register(r'api/ingredient', IngredientViewSet, basename='ingredient')
 router.register(r'api/meal', MealViewSet, basename='meal')
@@ -31,6 +28,14 @@ urlpatterns = [
     path('', include(router.urls)),
 ]
 ####OBJECT-ACTIONS-URLS-ENDS####
+
+
+
+
+
+
+
+
 
 
 

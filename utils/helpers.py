@@ -1,15 +1,12 @@
-from datetime import datetime, timedelta
+from twilio.rest import Client
 
-from cryptography.fernet import Fernet
+from nod_base import settings
 
-from nod_backend import settings
-
-
-def encrypt(item):
-    f = Fernet(settings.FERNET_KEY)
-    return f.encrypt(item.encode())
-
-
-def decrypt(encrypted_id):
-    f = Fernet(settings.FERNET_KEY)
-    return f.decrypt(encrypted_id).decode()
+def send_sms(to, body):
+    client = Client(settings.TWILIO_AUTH_ACCOUNT_SID, settings.TWILIO_AUTH_TOKEN)
+    message = client.messages.create(
+        body=body,
+        from_=settings.TWILIO_PHONE_NUMBER,
+        to=to
+    )
+    return message.sid

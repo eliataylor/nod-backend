@@ -1,5 +1,7 @@
 #!/bin/bash
 
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
 source "$SCRIPT_DIR/functions.sh"
 
 # Find root .env
@@ -25,7 +27,7 @@ fi
 
 # Check if necessary variables are set
 missing_vars=()
-for var in "${required_vars[@]}"; do
+for var in "${REQUIRED_VARS[@]}"; do
   if [ -z "${!var}" ]; then
     missing_vars+=("$var")
   fi
@@ -38,36 +40,3 @@ if [ ${#missing_vars[@]} -ne 0 ]; then
   done
   exit 1
 fi
-
-# Function to sanitize bucket name
-sanitize_bucket_name() {
-  local name="$1"
-  # Convert to lowercase
-  name=$(echo "$name" | tr '[:upper:]' '[:lower:]')
-  # Replace underscores with dashes
-  name=$(echo "$name" | tr '_' '-')
-  # Remove characters not allowed
-  name=$(echo "$name" | sed -e 's/[^a-z0-9-]//g')
-  # Trim to 63 characters max (to comply with bucket name length limit)
-  name=$(echo "$name" | cut -c 1-63)
-  echo "$name"
-}
-
-urlencode() {
-  local string="${1}"
-  local encoded=""
-  local char
-
-  for (( i=0; i<${#string}; i++ )); do
-    char="${string:i:1}"
-    case "$char" in
-      [a-zA-Z0-9.~_-]) encoded+="$char" ;;
-      ' ') encoded+="%20" ;;
-      *) printf -v encoded_char '%%%02X' "'$char"
-         encoded+="$encoded_char"
-         ;;
-    esac
-  done
-
-  echo "$encoded"
-}

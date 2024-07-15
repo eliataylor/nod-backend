@@ -1,20 +1,15 @@
-
-
-from django.core.exceptions import ObjectDoesNotExist
 ####OBJECT-ACTIONS-SERIALIZER-IMPORTS-STARTS####
 from rest_framework import serializers
-
-from .models import Customer
+from django.core.exceptions import ObjectDoesNotExist
+from django.db.models import ManyToManyField
+from .models import Users
+from .models import Supplier
 from .models import Ingredient
 from .models import Meal
-from .models import Order
-from .models import OrderItem
 from .models import Plan
-from .models import Supplier
-
-
+from .models import OrderItem
+from .models import Order
 ####OBJECT-ACTIONS-SERIALIZER-IMPORTS-ENDS####
-
 
 
 ####OBJECT-ACTIONS-SERIALIZERS-STARTS####
@@ -31,6 +26,7 @@ class SubFieldRelatedField(serializers.PrimaryKeyRelatedField):
     def __init__(self, **kwargs):
         self.slug_field = kwargs.pop('slug_field', None)
         super(SubFieldRelatedField, self).__init__(**kwargs)
+
     def to_internal_value(self, data):
         if self.pk_field is not None:
             field_label = self.pk_field.label
@@ -64,98 +60,52 @@ class SubFieldRelatedField(serializers.PrimaryKeyRelatedField):
 
 class CustomSerializer(serializers.ModelSerializer):
     serializer_related_field = SubFieldRelatedField
-class CustomerSerializer(CustomSerializer):
-    class Meta:
-        model = Customer
-        fields = '__all__'
 
+    def to_representation(self, instance):
+        # Get the original representation
+        representation = super().to_representation(instance)
+        # Add the model type
+        representation['_type'] = instance.__class__.__name__
+
+        for field in self.Meta.model._meta.fields:
+            if field.is_relation and field.many_to_one:
+                field_name = field.name
+                related_instance = getattr(instance, field_name)
+                if related_instance is not None:
+                    representation[field_name] = {
+                        "id": related_instance.pk,
+                        "str": str(related_instance),
+                        "_type": related_instance.__class__.__name__,
+                    }
+
+        return representation
+class UsersSerializer(CustomSerializer):
+    class Meta:
+        model = Users
+        fields = '__all__'
 class SupplierSerializer(CustomSerializer):
     class Meta:
         model = Supplier
         fields = '__all__'
-
 class IngredientSerializer(CustomSerializer):
     class Meta:
         model = Ingredient
         fields = '__all__'
-
 class MealSerializer(CustomSerializer):
     class Meta:
         model = Meal
         fields = '__all__'
-
 class PlanSerializer(CustomSerializer):
     class Meta:
         model = Plan
         fields = '__all__'
-
 class OrderItemSerializer(CustomSerializer):
     class Meta:
         model = OrderItem
         fields = '__all__'
-
 class OrderSerializer(CustomSerializer):
     class Meta:
         model = Order
         fields = '__all__'
-
 ####OBJECT-ACTIONS-SERIALIZERS-ENDS####
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 

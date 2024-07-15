@@ -1,31 +1,11 @@
 # Define required environment variables for this script
-required_vars=("GCP_PROJECT_ID" "GCP_SERVICE_NAME")
+REQUIRED_VARS=("GCP_PROJECT_ID" "GCP_SERVICE_NAME")
 
-# Set Path
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+show_section_header "CREATING SERVICE ACCOUNT"
 
-# Validate environment variables or exit
-source "$SCRIPT_DIR/common.sh"
+source "./common.sh"
 
-# Authenticate with Google Cloud
-show_section_header "Setting up gcloud CLI permissions using your own account..."
-show_loading "Configuring gcloud CLI with your own account..."
-gcloud auth login
-if [ $? -ne 0 ]; then
-    print_error "Configure gcloud CLI with Service Account" "Failed"
-    exit 1
-else
-    print_success "Configure gcloud CLI with Service Account" "Success"
-fi
-
-show_loading "Setting GCP Project..."
-gcloud config set project $GCP_PROJECT_ID
-if [ $? -ne 0 ]; then
-    print_error "Setting GCP Project" "Failed"
-    exit 1
-else
-    print_success "Setting GCP Project" "Success"
-fi
+login_owner "roles/owner"
 
 show_loading "Enable required IAM API..."
 gcloud services enable iam.googleapis.com
@@ -37,11 +17,9 @@ else
 fi
 
 
-# Add necessary IAM permissions for service account
-show_section_header "Setup service account and permissions..."
 show_loading "Creating service account..."
 if ! gcloud iam service-accounts describe $GCP_SERVICE_NAME@$GCP_PROJECT_ID.iam.gserviceaccount.com > /dev/null 2>&1; then
-    gcloud iam service-accounts create $SERVICE_ACCOUNT_ID \
+    gcloud iam service-accounts create $GCP_SERVICE_NAME \
     --description="Service account for automatic deployment to google cloud" \
     --display-name="$GCP_SERVICE_NAME"
     if [ $? -ne 0 ]; then
@@ -74,7 +52,7 @@ for role in "${roles[@]}"; do
         print_warning "$role role already exists" "Skipped"
     else
         gcloud projects add-iam-policy-binding $GCP_PROJECT_ID \
-        --member="serviceAccount:$SERVICE_ACCOUNT_ID@$GCP_PROJECT_ID.iam.gserviceaccount.com" \
+        --member="serviceAccount:$GCP_SERVICE_NAME@$GCP_PROJECT_ID.iam.gserviceaccount.com" \
         --role="$role" \
         --quiet
         if [ $? -ne 0 ]; then
