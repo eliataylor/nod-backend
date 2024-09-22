@@ -3,12 +3,13 @@ from rest_framework import serializers
 from django.core.exceptions import ObjectDoesNotExist
 from django.db.models import ManyToManyField
 from .models import Users
-from .models import Supplier
-from .models import Ingredient
-from .models import Meal
-from .models import Plan
-from .models import OrderItem
-from .models import Order
+from .models import Suppliers
+from .models import Ingredients
+from .models import Tags
+from .models import Meals
+from .models import Plans
+from .models import OrderItems
+from .models import Orders
 ####OBJECT-ACTIONS-SERIALIZER-IMPORTS-ENDS####
 
 
@@ -83,29 +84,61 @@ class UsersSerializer(CustomSerializer):
     class Meta:
         model = Users
         fields = '__all__'
-class SupplierSerializer(CustomSerializer):
+class SuppliersSerializer(CustomSerializer):
     class Meta:
-        model = Supplier
+        model = Suppliers
         fields = '__all__'
-class IngredientSerializer(CustomSerializer):
+class IngredientsSerializer(CustomSerializer):
     class Meta:
-        model = Ingredient
+        model = Ingredients
         fields = '__all__'
-class MealSerializer(CustomSerializer):
+class TagsSerializer(CustomSerializer):
     class Meta:
-        model = Meal
+        model = Tags
         fields = '__all__'
-class PlanSerializer(CustomSerializer):
+class MealsSerializer(CustomSerializer):
     class Meta:
-        model = Plan
+        model = Meals
         fields = '__all__'
-class OrderItemSerializer(CustomSerializer):
+class PlansSerializer(CustomSerializer):
     class Meta:
-        model = OrderItem
+        model = Plans
         fields = '__all__'
-class OrderSerializer(CustomSerializer):
+class OrderItemsSerializer(CustomSerializer):
     class Meta:
-        model = Order
+        model = OrderItems
+        fields = '__all__'
+class OrdersSerializer(CustomSerializer):
+    class Meta:
+        model = Orders
         fields = '__all__'
 ####OBJECT-ACTIONS-SERIALIZERS-ENDS####
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 

@@ -22,6 +22,7 @@ class ApiClient {
 
     constructor() {
         this.client = axios.create({
+            baseURL: process.env.REACT_APP_API_HOST,
             withCredentials: true, // Ensures cookies are sent with requests
             headers: {
                 'Referer': new URL(process.env.REACT_APP_API_HOST || '').host,  // Adding Referer header to simulate request origin
@@ -71,6 +72,11 @@ class ApiClient {
             resp.ended = new Date().getTime();
             resp.data = response.data;
             resp.success = true;
+
+            const setCookieHeader = config.headers['set-cookie'];
+            if (setCookieHeader) {
+                await this.setCookies(url, setCookieHeader);
+            }
 
         } catch (error: any) {
             resp.ended = new Date().getTime();

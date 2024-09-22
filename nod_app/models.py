@@ -15,21 +15,7 @@ from django.utils.text import slugify
 from djmoney.models.fields import MoneyField
 ####OBJECT-ACTIONS-MODELS_IMPORTS-ENDS####
 
-def generate_slug(title, max_length=50):
-    slug = slugify(title)
-    if len(slug) <= max_length:
-        return slug
 
-    words = slug.split('-')
-    truncated_slug = ''
-    for word in words:
-        if len(truncated_slug) + len(word) + 1 > max_length:  # +1 for the hyphen
-            break
-        if truncated_slug:
-            truncated_slug += '-'
-        truncated_slug += word
-
-    return truncated_slug
 
 ####OBJECT-ACTIONS-MODELS-STARTS####
 def validate_phone_number(value):
@@ -39,9 +25,11 @@ def validate_phone_number(value):
 
 class Users(AbstractUser, BumpParentsModelMixin):
 	class Meta:
-		verbose_name = "Customers"
-		verbose_name_plural = "Customers"
+		verbose_name = "User"
+		verbose_name_plural = "Users"
 		ordering = ['last_login']
+
+
 
 	phone = models.CharField(validators=[validate_phone_number], max_length=16, verbose_name='Phone')
 	billing_name = models.CharField(max_length=255, blank=True, null=True, verbose_name='Billing Name')
@@ -102,7 +90,7 @@ class SuperModel(models.Model):
 			return request.user
 		return None
 
-class Supplier(SuperModel):
+class Suppliers(SuperModel):
 	class Meta:
 		abstract = False
 		verbose_name = "Supplier"
@@ -116,7 +104,7 @@ class Supplier(SuperModel):
 		slug = base_slug
 		count = 1
 
-		while Supplier.objects.filter(url_alias=slug).exclude(id=self.id).exists():
+		while Suppliers.objects.filter(url_alias=slug).exclude(id=self.id).exists():
 			slug = f"{base_slug}-{count}"
 			count += 1
 		self.url_alias = slug
@@ -129,36 +117,29 @@ class Supplier(SuperModel):
 	address = models.CharField(max_length=255)
 	website = models.URLField(blank=True, null=True, verbose_name='Website')
 
-class Ingredient(SuperModel):
+class Ingredients(SuperModel):
 	class Meta:
 		abstract = False
 		verbose_name = "Ingredient"
 		verbose_name_plural = "Ingredients"
-	
-	def save(self, *args, **kwargs):
-		if 'name' in kwargs:
-			self.name = kwargs.pop('name')
 
-		base_slug = slugify(self.name)
-		slug = base_slug
-		count = 1
-
-		while Ingredient.objects.filter(id=slug).exclude(id=self.id).exists():
-			slug = f"{base_slug}-{count}"
-			count += 1
-		self.id = slug
-
-		super().save(*args, **kwargs)
-
-	id = models.SlugField(primary_key=True, unique=True, editable=False)
 	name = models.CharField(max_length=255, verbose_name='Name')
 	image = models.ImageField(upload_to='media/ingredients', blank=True, null=True, verbose_name='Image')
-	supplier = models.ForeignKey('Supplier', on_delete=models.SET_NULL, related_name='+', null=True, blank=True, verbose_name='Supplier')
+	supplier = models.ForeignKey('Suppliers', on_delete=models.SET_NULL, related_name='+', null=True, blank=True, verbose_name='Supplier')
 	seasonal = models.BooleanField(blank=True, null=True, verbose_name='Seasonal')
 	in_season_price = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True, verbose_name='In season Price')
 	out_of_season_price = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True, verbose_name='Out of season price')
 
-class Meal(SuperModel):
+class Tags(SuperModel):
+	class Meta:
+		abstract = False
+		verbose_name = "Tag"
+		verbose_name_plural = "Tags"
+
+	name = models.CharField(max_length=255, verbose_name='Name')
+	icon = models.ImageField(upload_to='media/ingredients', blank=True, null=True, verbose_name='Icon')
+
+class Meals(SuperModel):
 	class Meta:
 		abstract = False
 		verbose_name = "Meal"
@@ -168,11 +149,11 @@ class Meal(SuperModel):
 		if 'title' in kwargs:
 			self.title = kwargs.pop('title')
 
-		base_slug = generate_slug(self.title)
+		base_slug = slugify(self.title)
 		slug = base_slug
 		count = 1
 
-		while Meal.objects.filter(id=slug).exclude(id=self.id).exists():
+		while Meals.objects.filter(id=slug).exclude(id=self.id).exists():
 			slug = f"{base_slug}-{count}"
 			count += 1
 		self.id = slug
@@ -193,10 +174,11 @@ class Meal(SuperModel):
 	photo = models.FileField(upload_to='media/calendar', blank=True, null=True, verbose_name='Photo')
 	internal_cost = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True, verbose_name='Internal Cost')
 	public_price = models.DecimalField(max_digits=10, decimal_places=2, default=16, blank=True, null=True, verbose_name='Public Price')
-	ingredients = models.ForeignKey('Ingredient', on_delete=models.SET_NULL, null=True, blank=True, verbose_name='Ingredients')
-	suppliers = models.ForeignKey('Supplier', on_delete=models.SET_NULL, null=True, blank=True, verbose_name='Suppliers')
+	tags = models.ForeignKey('Tags', on_delete=models.SET_NULL, null=True, blank=True, verbose_name='Tags')
+	ingredients = models.ForeignKey('Ingredients', on_delete=models.SET_NULL, null=True, blank=True, verbose_name='Ingredients')
+	suppliers = models.ForeignKey('Suppliers', on_delete=models.SET_NULL, null=True, blank=True, verbose_name='Suppliers')
 
-class Plan(SuperModel):
+class Plans(SuperModel):
 	class Meta:
 		abstract = False
 		verbose_name = "Plan"
@@ -210,21 +192,21 @@ class Plan(SuperModel):
 		slug = base_slug
 		count = 1
 
-		while Plan.objects.filter(id=slug).exclude(id=self.id).exists():
+		while Plans.objects.filter(url_alias=slug).exclude(id=self.id).exists():
 			slug = f"{base_slug}-{count}"
 			count += 1
-		self.id = slug
+		self.url_alias = slug
 
 		super().save(*args, **kwargs)
 
-	id = models.SlugField(primary_key=True, unique=True, editable=False)
+	url_alias = models.SlugField(unique=True, default="name", verbose_name='URL Alias')
 	name = models.CharField(max_length=255, verbose_name='Name')
 	description = models.TextField(blank=True, null=True, verbose_name='Description')
-	meals = models.ForeignKey('Meal', on_delete=models.SET_NULL, null=True, verbose_name='Meals')
+	meals = models.ForeignKey('Meals', on_delete=models.SET_NULL, null=True, verbose_name='Meals')
 	MoneyField(decimal_places=2, default_currency='USD', max_digits=11, verbose_name='Price')
 	date = models.DateField(blank=True, null=True, verbose_name='Date')
 
-class OrderItem(SuperModel):
+class OrderItems(SuperModel):
 	class Meta:
 		abstract = False
 		verbose_name = "Order Item"
@@ -233,11 +215,11 @@ class OrderItem(SuperModel):
 	id = models.AutoField(primary_key=True)
 	date = models.DateField(verbose_name='Date')
 	delivery_date = models.DateField(verbose_name='Delivery Date')
-	meal = models.ForeignKey('Meal', on_delete=models.SET_NULL, related_name='+', null=True, blank=True, verbose_name='Meal')
-	meal_menu = models.ForeignKey('Plan', on_delete=models.SET_NULL, related_name='+', null=True, blank=True, verbose_name='Meal Menu')
+	meal = models.ForeignKey('Meals', on_delete=models.SET_NULL, related_name='+', null=True, blank=True, verbose_name='Meal')
+	meal_menu = models.ForeignKey('Plans', on_delete=models.SET_NULL, related_name='+', null=True, blank=True, verbose_name='Meal Menu')
 	servings = models.IntegerField(default=1, verbose_name='Servings')
 
-class Order(SuperModel):
+class Orders(SuperModel):
 	class Meta:
 		abstract = False
 		verbose_name = "Order"
@@ -256,7 +238,13 @@ class Order(SuperModel):
 	customizations = models.TextField(verbose_name='Customizations')
 	glass_containers = models.BooleanField(default="0", blank=True, null=True, verbose_name='Glass Containers')
 	recurring = models.BooleanField(default="0", blank=True, null=True, verbose_name='Recurring')
-	order_items = models.ForeignKey('OrderItem', on_delete=models.SET_NULL, null=True, verbose_name='Order Items')
+	order_items = models.ForeignKey('OrderItems', on_delete=models.SET_NULL, null=True, verbose_name='Order Items')
 	status = models.CharField(max_length=20, choices=StatusChoices.choices, verbose_name='Status', default="unpaid")
 ####OBJECT-ACTIONS-MODELS-ENDS####
+
+
+
+
+
+
 

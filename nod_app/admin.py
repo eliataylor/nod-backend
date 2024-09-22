@@ -3,12 +3,13 @@ from django.contrib import admin
 from django.utils.translation import gettext_lazy as _
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from .models import Users
-from .models import Supplier
-from .models import Ingredient
-from .models import Meal
-from .models import Plan
-from .models import OrderItem
-from .models import Order
+from .models import Suppliers
+from .models import Ingredients
+from .models import Tags
+from .models import Meals
+from .models import Plans
+from .models import OrderItems
+from .models import Orders
 ####OBJECT-ACTIONS-ADMIN_IMPORTS-ENDS####
 
 
@@ -28,36 +29,69 @@ class UsersAdmin(BaseUserAdmin):
 
 admin.site.register(Users, UsersAdmin)
 
-class SupplierAdmin(admin.ModelAdmin):
+class SuppliersAdmin(admin.ModelAdmin):
 	readonly_fields = ('id',)
 
-admin.site.register(Supplier, SupplierAdmin)
+admin.site.register(Suppliers, SuppliersAdmin)
 
-class IngredientAdmin(admin.ModelAdmin):
+class IngredientsAdmin(admin.ModelAdmin):
 	readonly_fields = ('id',)
 
-admin.site.register(Ingredient, IngredientAdmin)
+admin.site.register(Ingredients, IngredientsAdmin)
 
-class MealAdmin(admin.ModelAdmin):
+class TagsAdmin(admin.ModelAdmin):
 	readonly_fields = ('id',)
 
-admin.site.register(Meal, MealAdmin)
+admin.site.register(Tags, TagsAdmin)
 
-class PlanAdmin(admin.ModelAdmin):
+class MealsAdmin(admin.ModelAdmin):
 	readonly_fields = ('id',)
 
-admin.site.register(Plan, PlanAdmin)
+admin.site.register(Meals, MealsAdmin)
 
-class OrderItemAdmin(admin.ModelAdmin):
+class PlansAdmin(admin.ModelAdmin):
 	readonly_fields = ('id',)
 
-admin.site.register(OrderItem, OrderItemAdmin)
+admin.site.register(Plans, PlansAdmin)
 
-class OrderAdmin(admin.ModelAdmin):
+class OrderItemsAdmin(admin.ModelAdmin):
 	readonly_fields = ('id',)
 
-admin.site.register(Order, OrderAdmin)
+admin.site.register(OrderItems, OrderItemsAdmin)
+
+class OrdersAdmin(admin.ModelAdmin):
+	readonly_fields = ('id',)
+
+admin.site.register(Orders, OrdersAdmin)
 ####OBJECT-ACTIONS-ADMIN_MODELS-ENDS####
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
