@@ -4,11 +4,14 @@
 set -e
 
 # Run database migrations
-echo "Running database migrations"
-python manage.py makemigrations
-python manage.py migrate
-python manage.py migrate --run-syncdb
-python manage.py collectstatic --noinput
+#echo "Eli Tests - Running migrate run-syncb"
+#python manage.py migrate --run-syncdb --noinput
+# echo "Eli Tests - Running makemigrations"
+# python manage.py makemigrations --noinput
+# echo "Eli Tests - Running migrate"
+# python manage.py migrate --noinput
+# echo "Eli Tests - Running collectstatic"
+# python manage.py collectstatic --noinput
 
 # Create a superuser if it does not exist
 if [ "$DJANGO_SUPERUSER_USERNAME" ] && [ "$DJANGO_SUPERUSER_PASSWORD" ] && [ "$DJANGO_SUPERUSER_EMAIL" ]; then
@@ -20,4 +23,4 @@ else
 fi
 
 # Run the gunicorn server
-exec gunicorn nod_backend.wsgi:application --bind 0.0.0.0:8000 --workers 1 --threads 8 --timeout 0
+exec gunicorn nod_base.wsgi:application --bind 0.0.0.0:8080 --workers 4 --threads 8 --timeout 0
